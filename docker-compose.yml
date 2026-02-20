@@ -1,18 +1,53 @@
-version: "3.9"
+version: '3.8'
 
 services:
-  server:
-    build: ./server
-    container_name: supcontent_server
+  mysql:
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: supcontent
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./supcontent-backend/src/database/schema.sql:/docker-entrypoint-initdb.d/init.sql
+
+  backend:
+    build: ./supcontent-backend
     ports:
       - "5000:5000"
-    restart: always
+    environment:
+      - PORT=5000
+      - DB_HOST=mysql
+      - DB_USER=user
+      - DB_PASSWORD=password
+      - DB_NAME=supcontent
+      - JWT_SECRET=dev_secret_key_123
+      - TMDB_API_KEY=${TMDB_API_KEY}
+    depends_on:
+      - mysql
+    working_dir: /app
+    command: npm run dev
+    volumes:
+      - ./supcontent-backend:/app
+      - /app/node_modules
 
   web:
-    build: ./web
-    container_name: supcontent_web
+    build:
+      context: ./supcontent-web
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=http://localhost:5000/api
     ports:
-      - "3000:3000"
+      - "3000:80"
+    environment:
+      - VITE_API_URL=http://localhost:5000/api
     depends_on:
-      - server
-    restart: always
+      - backend
+
+volumes:
+  mysql_data:
