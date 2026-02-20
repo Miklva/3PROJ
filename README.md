@@ -15,3 +15,5 @@ Ce placer dans le dossier /3PROJ:
 ``Terminal 
 - docker compose up --build
 
+``Web
+- http://localhost:3000/

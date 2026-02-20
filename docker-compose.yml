@@ -3,9 +3,16 @@ version: "3.9"
 services:
   server:
     build: ./server
+    container_name: supcontent_server
+    ports:
+      - "5000:5000"
+    restart: always
+
+  web:
+    build: ./web
+    container_name: supcontent_web
     ports:
       - "3000:3000"
-    volumes:
-      - ./server:/usr/src/app
-    environment:
-      - NODE_ENV=development
+    depends_on:
+      - server
+    restart: always
