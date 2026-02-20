@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.9"
 
 services:
   mysql:
@@ -14,10 +14,10 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./supcontent-backend/src/database/schema.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./server/src/database/schema.sql:/docker-entrypoint-initdb.d/init.sql
 
   backend:
-    build: ./supcontent-backend
+    build: ./server
     ports:
       - "5000:5000"
     environment:
@@ -31,19 +31,19 @@ services:
     depends_on:
       - mysql
     working_dir: /app
-    command: npm run dev
+    command: npm start
     volumes:
-      - ./supcontent-backend:/app
+      - ./server:/app
       - /app/node_modules
 
   web:
     build:
-      context: ./supcontent-web
+      context: ./web
       dockerfile: Dockerfile
       args:
         - VITE_API_URL=http://localhost:5000/api
     ports:
-      - "3000:80"
+      - "3000:3000"
     environment:
       - VITE_API_URL=http://localhost:5000/api
     depends_on:
