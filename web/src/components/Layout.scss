@@ -1,0 +1,28 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+}
+
+.layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  background-color: #222;
+}
+
+.navbar a {
+  text-decoration: none;
+  color: white;
+  margin-left: 1.5rem;
+}
+
+.navbar a:hover {
+  opacity: 0.7;
+}
