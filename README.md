@@ -13,6 +13,7 @@ OU
 
 Installer Github Dekstop puis cloner le repository
 
+Dupliquer le fichier ".env.example" en ".env" et copier sa clé d'API
 
 # Lancement 
 Lancer Docker Desktop
