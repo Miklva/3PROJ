@@ -9,6 +9,11 @@ Ouvrir un terminal dans ce dossier:
 - cd ./server
 - npm install
 
+OU 
+
+Installer Github Dekstop puis cloner le repository
+
+
 # Lancement 
 Lancer Docker Desktop
 Ce placer dans le dossier /3PROJ:
