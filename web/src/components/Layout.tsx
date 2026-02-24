@@ -9,6 +9,7 @@ export default function Layout() {
                 <div className="links">
                     <Link to="/profile">Profil</Link>
                     <Link to="/settings">Paramètre</Link>
+                    <Link to="/register">S'inscrire</Link>
                 </div>
             </nav>
             <main className="main">
