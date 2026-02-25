@@ -1,7 +1,9 @@
+@use "../colors" as c;
+
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background-color: c.$white;
+  background-color: c.$light-blue;
 }
 
 .layout {

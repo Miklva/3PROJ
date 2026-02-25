@@ -1,4 +1,4 @@
-@use "../styles/colors" as c;
+@use "../colors" as c;
 
 .register-page {
   display: flex;
@@ -6,7 +6,7 @@
   justify-content: center;
   min-height: calc(100vh - 60px);
   padding: 2rem;
-  background-color: c.$gray;
+  background-color: c.$white;
 }
 
 .register-card {
