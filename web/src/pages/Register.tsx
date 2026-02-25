@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import Button from "../components/Button";
 import './Register.scss';
+
 
 interface ServerError {
     msg: string;
@@ -93,10 +95,13 @@ export default function Register() {
                             minLength={6}
                         />
                     </div>
-
-                    <button type="submit" className="btn-register" disabled={loading}>
+                    
+                    <Button
+                        type="submit"
+                        disabled={loading}
+                    >
                         {loading ? 'Inscription...' : "S'inscrire"}
-                    </button>
+                    </Button>
                 </form>
 
                 <p className="register-login-link">

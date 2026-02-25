@@ -38,12 +38,12 @@ export default function Home() {
                             <div className="poster">
                                 <img
                                     src={`https://image.tmdb.org/t/p/w500${media.poster_path}`}
-                                    alt={media.title || "Inconnu"}
+                                    alt={media.title || media.name || "Inconnu"}
                                 />
                             </div>
 
                             <h3 className="nom">
-                                {media.title || "Inconnu"}
+                                {media.title || media.name || "Inconnu"}
                             </h3>
                         </div>
                     ))}

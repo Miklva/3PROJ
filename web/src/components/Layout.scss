@@ -1,7 +1,7 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
+  background-color: c.$white;
 }
 
 .layout {
@@ -14,12 +14,12 @@ body {
   display: flex;
   justify-content: space-between;
   padding: 1rem 2rem;
-  background-color: #222;
+  background-color: c.$gray;
 }
 
 .navbar a {
   text-decoration: none;
-  color: white;
+  color: c.$white;
   margin-left: 1.5rem;
 }
 
