@@ -1,9 +1,27 @@
 @use "../colors" as c;
 
 body {
+  font-family: 'Inter', sans-serif;
   margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: c.$light-blue;
+
+  background:
+    radial-gradient(
+      circle at 15% 20%,
+      rgba(124, 58, 237, 0.25),
+      transparent 45%
+    ),
+    radial-gradient(
+      circle at 85% 75%,
+      rgba(99, 102, 241, 0.2),
+      transparent 45%
+    ),
+    linear-gradient(
+      180deg,
+      #111111 0%,
+      #0a0a0a 100%
+    );
+
+  color: c.$white;
 }
 
 .layout {
@@ -15,8 +33,19 @@ body {
 .navbar {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+
   padding: 1rem 2rem;
-  background-color: c.$gray;
+
+  background: linear-gradient(
+    180deg,
+    #1a1a1a,
+    #141414
+  );
+
+  border-bottom: 1px solid rgba(124, 58, 237, 0.3);
+
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
 }
 
 .navbar a {
@@ -27,4 +56,8 @@ body {
 
 .navbar a:hover {
   opacity: 0.7;
+}
+
+.logo {
+  height: 2rem;
 }
