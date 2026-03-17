@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import Button from "../components/Button";
 import './Register.scss';
-
 
 interface ServerError {
     msg: string;
@@ -11,6 +11,7 @@ interface ServerError {
 
 export default function Register() {
     const navigate = useNavigate();
+    const { register } = useAuth();
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -22,26 +23,14 @@ export default function Register() {
         setErrors([]);
         setLoading(true);
 
-        try {
-            const res = await fetch('/api/auth/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, email, password }),
-            });
+        const res = await register(username, email, password);
 
-            const data = await res.json();
-
-            if (!res.ok) {
-                setErrors(data.errors || [{ msg: 'Erreur inconnue' }]);
-            } else {
-                localStorage.setItem('token', data.token);
-                navigate('/');
-            }
-        } catch {
-            setErrors([{ msg: 'Impossible de contacter le serveur' }]);
-        } finally {
-            setLoading(false);
+        if (res.success) {
+            navigate('/');
+        } else {
+            setErrors(res.errors || [{ msg: 'Erreur inconnue' }]);
         }
+        setLoading(false);
     };
 
     return (

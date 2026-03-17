@@ -1,0 +1,246 @@
+@use "../colors" as c;
+
+.settings-page {
+  min-height: calc(100vh - 60px);
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.settings-container {
+  width: 100%;
+  max-width: 680px;
+}
+
+.settings-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: c.$white;
+  margin: 0 0 1.5rem;
+}
+
+/* ---------- TABS ---------- */
+.settings-tabs {
+  display: flex;
+  gap: 0.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 1.5rem;
+}
+
+.settings-tab {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 0.6rem 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: -1px;
+
+  &:hover {
+    color: c.$white;
+  }
+
+  &.active {
+    color: c.$purple;
+    border-bottom-color: c.$purple;
+  }
+}
+
+/* ---------- MESSAGE ALERT ---------- */
+.settings-message {
+  padding: 0.85rem 1rem;
+  border-radius: 6px;
+  margin-bottom: 1.25rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+
+  &.success {
+    background: rgba(c.$green, 0.15);
+    border-left: 4px solid c.$green;
+    color: c.$green;
+  }
+
+  &.error {
+    background: rgba(c.$red, 0.12);
+    border-left: 4px solid c.$red;
+    color: c.$light-red;
+  }
+}
+
+/* ---------- CARD ---------- */
+.settings-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 2rem;
+}
+
+/* ---------- FORM ---------- */
+.settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+
+  h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: c.$white;
+    margin: 0 0 0.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+
+  label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  input,
+  textarea {
+    padding: 0.65rem 0.9rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.06);
+    color: c.$white;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+    font-family: inherit;
+    resize: vertical;
+
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.3);
+    }
+
+    &:focus {
+      border-color: c.$purple;
+    }
+  }
+}
+
+.char-count {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.35);
+  text-align: right;
+}
+
+/* ---------- AVATAR UPLOAD ---------- */
+.avatar-upload-box {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.current-avatar {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(c.$purple, 0.5);
+}
+
+.btn-upload-avatar {
+  background: rgba(c.$purple, 0.15);
+  border: 1px solid rgba(c.$purple, 0.4);
+  color: c.$light-purple;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover:not(:disabled) {
+    background: rgba(c.$purple, 0.25);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+/* ---------- WARNING ---------- */
+.settings-warning {
+  background: rgba(c.$yellow, 0.1);
+  border-left: 4px solid c.$yellow;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.875rem;
+  padding: 0.75rem 1rem;
+  border-radius: 4px;
+}
+
+/* ---------- SECTIONS (data tab) ---------- */
+.settings-section {
+  padding-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+  &:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: c.$white;
+    margin: 0 0 1rem;
+  }
+
+  p {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.55);
+    margin: 0 0 1rem;
+  }
+}
+
+.settings-info-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+
+  span {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  strong {
+    font-size: 0.9rem;
+    color: c.$white;
+  }
+}
+
+.danger-zone {
+  h3 {
+    color: c.$light-red;
+  }
+}
+
+.btn-logout-settings {
+  background: rgba(c.$red, 0.15);
+  border: 1px solid rgba(c.$red, 0.4);
+  color: c.$light-red;
+  padding: 0.6rem 1.25rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover {
+    background: rgba(c.$red, 0.28);
+  }
+}

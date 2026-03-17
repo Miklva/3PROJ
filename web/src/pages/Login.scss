@@ -1,0 +1,88 @@
+@use "../colors" as c;
+
+.login-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 60px);
+  padding: 2rem;
+}
+
+.login-card {
+  background: c.$white;
+  padding: 2.5rem 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 420px;
+
+  h2 {
+    margin: 0 0 0.25rem;
+    font-size: 1.6rem;
+    color: c.$black;
+  }
+
+  .login-subtitle {
+    margin: 0 0 1.5rem;
+    color: c.$dark-gray;
+    font-size: 0.95rem;
+  }
+}
+
+.login-errors {
+  background: rgba(c.$red, 0.1);
+  border-left: 4px solid c.$red;
+  padding: 0.75rem 1rem;
+  border-radius: 4px;
+  margin-bottom: 1.25rem;
+
+  p {
+    margin: 0;
+    color: c.$dark-red;
+    font-size: 0.875rem;
+  }
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+
+  label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: c.$dark-gray;
+  }
+
+  input {
+    padding: 0.6rem 0.8rem;
+    border: 1px solid c.$light-gray;
+    border-radius: 5px;
+    font-size: 0.95rem;
+    transition: border-color 0.2s;
+
+    &:focus {
+      outline: none;
+      border-color: c.$black;
+    }
+  }
+}
+
+.login-register-link {
+  margin-top: 1.25rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: c.$dark-gray;
+
+  a {
+    color: c.$black;
+    font-weight: 600;
+    text-decoration: underline;
+  }
+}
