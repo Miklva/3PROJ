@@ -13,6 +13,12 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
       - ./server/src/database/schema.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "user", "-ppassword"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
 
   backend:
     build: ./server
@@ -27,7 +33,9 @@ services:
       - JWT_SECRET=dev_secret_key_123
       - TMDB_API_KEY=${TMDB_API_KEY}
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
+    restart: on-failure
     working_dir: /app
     command: npm start
     volumes:
