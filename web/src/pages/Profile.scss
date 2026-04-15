@@ -1,22 +1,25 @@
+@use "../colors" as c;
+
 .profile-page {
     display: flex;
     justify-content: center;
     align-items: flex-start;
     min-height: calc(100vh - 60px);
     padding: 3rem 1.5rem;
-    background-color: #f4f4f4;
 }
 
 .profile-card {
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 16px;
     padding: 2.5rem 2rem;
     width: 100%;
     max-width: 480px;
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 0 0 1px rgba(c.$purple, 0.08), 0 20px 60px rgba(0, 0, 0, 0.35);
 }
 
 .profile-header {
@@ -35,14 +38,13 @@
     border-radius: 50%;
     overflow: hidden;
     margin-bottom: 0.5rem;
+    border: 2px solid rgba(c.$purple, 0.5);
+    box-shadow: 0 0 0 4px rgba(c.$purple, 0.12);
     transition: transform 0.2s;
 
     &:hover {
         transform: scale(1.05);
-
-        .avatar-overlay {
-            opacity: 1;
-        }
+        .avatar-overlay { opacity: 1; }
     }
 }
 
@@ -55,8 +57,8 @@
 .profile-avatar-placeholder {
     width: 100%;
     height: 100%;
-    background-color: #222;
-    color: #fff;
+    background: linear-gradient(135deg, c.$dark-purple, c.$purple);
+    color: c.$white;
     font-size: 2.5rem;
     font-weight: 700;
     display: flex;
@@ -66,12 +68,9 @@
 
 .avatar-overlay {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.4);
-    color: #fff;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    color: c.$white;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -83,41 +82,49 @@
 .profile-username {
     margin: 0;
     font-size: 1.6rem;
-    font-weight: 700;
-    color: #222;
+    font-weight: 800;
+    color: c.$white;
+    letter-spacing: -0.03em;
 }
 
 .profile-email {
     margin: 0;
-    font-size: 0.9rem;
-    color: #888;
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.4);
 }
 
 .profile-stats {
     display: flex;
     justify-content: center;
-    gap: 3rem;
-    padding: 1rem 0;
-    border-top: 1px solid #f0f0f0;
-    border-bottom: 1px solid #f0f0f0;
+    gap: 0;
+    padding: 1.25rem 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
 
 .stat-item {
     display: flex;
     flex-direction: column;
     align-items: center;
+    flex: 1;
+
+    & + & {
+        border-left: 1px solid rgba(255, 255, 255, 0.07);
+    }
 }
 
 .stat-count {
-    font-size: 1.25rem;
+    font-size: 1.3rem;
     font-weight: 700;
-    color: #222;
+    color: c.$white;
 }
 
 .stat-label {
-    font-size: 0.8rem;
-    color: #888;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.4);
     font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .profile-bio-section {
@@ -132,9 +139,11 @@
 
         h3 {
             margin: 0;
-            font-size: 1rem;
-            font-weight: 600;
-            color: #222;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
         }
     }
 }
@@ -142,24 +151,31 @@
 .bio-text {
     margin: 0;
     font-size: 0.95rem;
-    line-height: 1.5;
-    color: #444;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.65);
     white-space: pre-wrap;
 }
 
 .bio-input {
     width: 100%;
     min-height: 80px;
-    padding: 0.75rem;
-    border: 1px solid #ddd;
+    padding: 0.75rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    color: c.$white;
     font-family: inherit;
     font-size: 0.95rem;
     resize: vertical;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-sizing: border-box;
+
+    &::placeholder { color: rgba(255, 255, 255, 0.2); }
 
     &:focus {
         outline: none;
-        border-color: #222;
+        border-color: rgba(c.$purple, 0.7);
+        box-shadow: 0 0 0 3px rgba(c.$purple, 0.15);
     }
 }
 
@@ -168,56 +184,49 @@
 .btn-cancel-bio {
     background: none;
     border: none;
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     font-weight: 600;
     cursor: pointer;
     padding: 0;
+    font-family: inherit;
 }
 
-.btn-edit-bio {
-    color: #222;
-    text-decoration: underline;
-}
+.btn-edit-bio  { color: c.$light-purple; }
+.btn-save-bio  { color: c.$green; margin-right: 0.75rem; }
+.btn-cancel-bio { color: c.$light-red; }
 
-.btn-save-bio {
-    color: #2ecc71;
-    margin-right: 0.75rem;
-}
-
-.btn-cancel-bio {
-    color: #e74c3c;
-}
-
-.profile-info {
-    margin-top: 0.5rem;
-}
+.profile-info { margin-top: 0.5rem; }
 
 .profile-info-item {
     display: flex;
     justify-content: space-between;
     font-size: 0.85rem;
-    color: #888;
+    color: rgba(255, 255, 255, 0.4);
+    padding: 0.4rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+
+    &:last-child { border-bottom: none; }
 }
 
 .profile-info-value {
-    color: #444;
+    color: rgba(255, 255, 255, 0.75);
     font-weight: 500;
 }
 
 .btn-logout {
-    margin-top: 0.5rem;
-    padding: 0.75rem;
-    background-color: transparent;
-    color: #e74c3c;
-    border: 2px solid #e74c3c;
+    padding: 0.7rem;
+    background: transparent;
+    color: c.$light-red;
+    border: 1px solid rgba(c.$red, 0.35);
     border-radius: 8px;
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s;
+    font-family: inherit;
 
     &:hover {
-        background-color: #e74c3c;
-        color: #fff;
+        background: rgba(c.$red, 0.12);
+        border-color: rgba(c.$red, 0.55);
     }
 }

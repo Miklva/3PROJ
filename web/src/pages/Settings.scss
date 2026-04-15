@@ -2,95 +2,98 @@
 
 .settings-page {
   min-height: calc(100vh - 60px);
-  padding: 2rem;
+  padding: 2.5rem 1.5rem;
   display: flex;
   justify-content: center;
 }
 
 .settings-container {
   width: 100%;
-  max-width: 680px;
+  max-width: 660px;
 }
 
 .settings-title {
-  font-size: 1.8rem;
-  font-weight: 700;
+  font: 800 2rem;
   color: c.$white;
-  margin: 0 0 1.5rem;
+  margin-bottom: 2rem;
+
+  &::after {
+    content: "";
+    display: block;
+    width: 2.5rem;
+    height: 3px;
+    margin-top: 0.5rem;
+    background: c.$purple;
+  }
 }
 
-/* ---------- TABS ---------- */
 .settings-tabs {
   display: flex;
-  gap: 0.25rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  gap: 0.3rem;
+  padding: 0.25rem;
   margin-bottom: 1.5rem;
+  border-radius: 8px;
+  background: rgba(c.$white, 0.04);
+  border: 1px solid rgba(c.$white, 0.08);
+
+  .settings-tab {
+    all: unset;
+    padding: 0.55rem 1.2rem;
+    font: 600 0.85rem;
+    color: rgba(c.$white, 0.5);
+    cursor: pointer;
+    border-radius: 6px;
+    transition: 0.2s;
+
+    &:hover {
+      color: c.$white;
+      background: rgba(c.$white, 0.05);
+    }
+
+    &.active {
+      color: c.$white;
+      background: c.$purple;
+    }
+  }
 }
 
-.settings-tab {
-  background: none;
-  border: none;
-  border-bottom: 2px solid transparent;
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 0.95rem;
-  font-weight: 500;
-  padding: 0.6rem 1.2rem;
-  cursor: pointer;
-  transition: all 0.2s;
-  margin-bottom: -1px;
-
-  &:hover {
-    color: c.$white;
-  }
-
-  &.active {
-    color: c.$purple;
-    border-bottom-color: c.$purple;
-  }
-}
-
-/* ---------- MESSAGE ALERT ---------- */
 .settings-message {
   padding: 0.85rem 1rem;
-  border-radius: 6px;
   margin-bottom: 1.25rem;
-  font-size: 0.9rem;
-  font-weight: 500;
+  border-radius: 6px;
+  font: 500 0.85rem;
 
   &.success {
-    background: rgba(c.$green, 0.15);
-    border-left: 4px solid c.$green;
+    background: rgba(c.$green, 0.1);
+    border-left: 3px solid c.$green;
     color: c.$green;
   }
 
   &.error {
-    background: rgba(c.$red, 0.12);
-    border-left: 4px solid c.$red;
+    background: rgba(c.$red, 0.1);
+    border-left: 3px solid c.$red;
     color: c.$light-red;
   }
 }
 
-/* ---------- CARD ---------- */
 .settings-card {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
   padding: 2rem;
+  border-radius: 12px;
+  background: rgba(c.$white, 0.03);
+  border: 1px solid rgba(c.$white, 0.08);
 }
 
-/* ---------- FORM ---------- */
 .settings-form {
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
 
   h2 {
-    font-size: 1.1rem;
-    font-weight: 600;
+    font: 700 1rem;
     color: c.$white;
-    margin: 0 0 0.25rem;
+    margin-bottom: 0.25rem;
     padding-bottom: 0.75rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid rgba(c.$white, 0.08);
   }
 }
 
@@ -100,26 +103,23 @@
   gap: 0.4rem;
 
   label {
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.7);
+    font: 600 0.8rem;
+    color: rgba(c.$white, 0.6);
   }
 
   input,
   textarea {
-    padding: 0.65rem 0.9rem;
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 0.7rem 0.9rem;
     border-radius: 6px;
-    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(c.$white, 0.12);
+    background: rgba(c.$white, 0.05);
     color: c.$white;
-    font-size: 0.95rem;
-    outline: none;
-    transition: border-color 0.2s;
-    font-family: inherit;
+    font: 0.9rem inherit;
+    transition: 0.2s;
     resize: vertical;
 
     &::placeholder {
-      color: rgba(255, 255, 255, 0.3);
+      color: rgba(c.$white, 0.3);
     }
 
     &:focus {
@@ -129,16 +129,18 @@
 }
 
 .char-count {
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.7rem;
+  color: rgba(c.$white, 0.3);
   text-align: right;
 }
 
-/* ---------- AVATAR UPLOAD ---------- */
 .avatar-upload-box {
   display: flex;
   align-items: center;
   gap: 1rem;
+  padding: 0.8rem;
+  border-radius: 8px;
+  border: 1px dashed rgba(c.$white, 0.12);
 }
 
 .current-avatar {
@@ -150,14 +152,14 @@
 }
 
 .btn-upload-avatar {
-  background: rgba(c.$purple, 0.15);
-  border: 1px solid rgba(c.$purple, 0.4);
-  color: c.$light-purple;
   padding: 0.5rem 1rem;
   border-radius: 6px;
-  font-size: 0.875rem;
+  font: 0.85rem;
   cursor: pointer;
-  transition: background 0.2s;
+  background: rgba(c.$purple, 0.15);
+  border: 1px solid rgba(c.$purple, 0.4);
+  color: c.$white;
+  transition: 0.2s;
 
   &:hover:not(:disabled) {
     background: rgba(c.$purple, 0.25);
@@ -169,52 +171,48 @@
   }
 }
 
-/* ---------- WARNING ---------- */
 .settings-warning {
-  background: rgba(c.$yellow, 0.1);
-  border-left: 4px solid c.$yellow;
-  color: rgba(255, 255, 255, 0.75);
-  font-size: 0.875rem;
   padding: 0.75rem 1rem;
-  border-radius: 4px;
+  border-radius: 6px;
+  background: rgba(c.$yellow, 0.08);
+  border-left: 3px solid c.$yellow;
+  color: rgba(c.$white, 0.7);
+  font-size: 0.85rem;
 }
 
-/* ---------- SECTIONS (data tab) ---------- */
 .settings-section {
-  padding-bottom: 1.5rem;
   margin-bottom: 1.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(c.$white, 0.08);
 
   &:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-    padding-bottom: 0;
+    border: none;
+    margin: 0;
+    padding: 0;
   }
 
   h3 {
-    font-size: 1rem;
-    font-weight: 600;
+    font: 600 0.95rem;
     color: c.$white;
-    margin: 0 0 1rem;
+    margin-bottom: 1rem;
   }
 
   p {
-    font-size: 0.875rem;
-    color: rgba(255, 255, 255, 0.55);
-    margin: 0 0 1rem;
+    font-size: 0.85rem;
+    color: rgba(c.$white, 0.5);
+    margin-bottom: 1rem;
   }
 }
 
 .settings-info-line {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 0.6rem 0;
+  border-bottom: 1px solid rgba(c.$white, 0.05);
 
   span {
-    font-size: 0.875rem;
-    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.8rem;
+    color: rgba(c.$white, 0.5);
   }
 
   strong {
@@ -223,24 +221,22 @@
   }
 }
 
-.danger-zone {
-  h3 {
-    color: c.$light-red;
-  }
+
+.danger-zone h3 {
+  color: c.$light-red;
 }
 
 .btn-logout-settings {
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  font: 600 0.85rem;
+  cursor: pointer;
   background: rgba(c.$red, 0.15);
   border: 1px solid rgba(c.$red, 0.4);
   color: c.$light-red;
-  padding: 0.6rem 1.25rem;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
+  transition: 0.2s;
 
   &:hover {
-    background: rgba(c.$red, 0.28);
+    background: rgba(c.$red, 0.25);
   }
 }
