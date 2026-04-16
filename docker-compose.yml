@@ -31,7 +31,6 @@ services:
       - DB_PASSWORD=password
       - DB_NAME=supcontent
       - JWT_SECRET=dev_secret_key_123
-      - TMDB_API_KEY=${TMDB_API_KEY}
     depends_on:
       mysql:
         condition: service_healthy

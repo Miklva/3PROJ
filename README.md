@@ -8,12 +8,7 @@ Ouvrir un terminal dans ce dossier:
 - git clone https://github.com/Miklva/3PROJ.git
 - cd ./server
 - npm install
-
-OU 
-
 Installer Github Dekstop puis cloner le repository
-
-
 # Lancement 
 Lancer Docker Desktop
 Ce placer dans le dossier /3PROJ:
