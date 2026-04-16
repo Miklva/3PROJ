@@ -24,7 +24,7 @@ Ce placer dans le dossier /3PROJ:
 - http://localhost:3000/
 
 ``Server
-Pour un probleme d'un module non trouvé tapez les commande suivante :
+-Pour un probleme d'un module non trouvé tapez les commande suivante :
 docker-compose down
 docker-compose build --no-cache
 docker-compose up
