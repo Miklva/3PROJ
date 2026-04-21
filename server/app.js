@@ -5,8 +5,10 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 const path = require('path');
+const passport = require('./src/config/passport');
 app.use(cors());
 app.use(express.json());
+app.use(passport.initialize());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 

@@ -31,6 +31,10 @@ export default function Login() {
         setLoading(false);
     };
 
+    const handleOAuth = (provider: string) => {
+        window.location.href = `http://localhost:5000/api/auth/${provider}`;
+    };
+
     return (
         <div className="login-page">
             <div className="login-card">
@@ -72,6 +76,19 @@ export default function Login() {
                         {loading ? 'Connexion...' : 'Se connecter'}
                     </Button>
                 </form>
+
+                <div className="login-divider">
+                    <span>OU</span>
+                </div>
+
+                <div className="social-login">
+                    <button className="btn-social google" onClick={() => handleOAuth('google')}>
+                        <i>G</i> Continuer avec Google
+                    </button>
+                    <button className="btn-social github" onClick={() => handleOAuth('github')}>
+                        <i>G</i> Continuer avec GitHub
+                    </button>
+                </div>
 
                 <p className="login-register-link">
                     Pas encore de compte ?{' '}

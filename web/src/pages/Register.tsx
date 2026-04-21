@@ -33,6 +33,10 @@ export default function Register() {
         setLoading(false);
     };
 
+    const handleOAuth = (provider: string) => {
+        window.location.href = `http://localhost:5000/api/auth/${provider}`;
+    };
+
     return (
         <div className="register-page">
             <div className="register-card">
@@ -92,6 +96,19 @@ export default function Register() {
                         {loading ? 'Inscription...' : "S'inscrire"}
                     </Button>
                 </form>
+
+                <div className="register-divider">
+                    <span>OU</span>
+                </div>
+
+                <div className="social-login">
+                    <button className="btn-social google" onClick={() => handleOAuth('google')}>
+                        <i>G</i> Continuer avec Google
+                    </button>
+                    <button className="btn-social github" onClick={() => handleOAuth('github')}>
+                        <i>G</i> Continuer avec GitHub
+                    </button>
+                </div>
 
                 <p className="register-login-link">
                     Déjà un compte ?{' '}

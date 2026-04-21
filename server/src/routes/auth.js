@@ -79,7 +79,7 @@ router.post('/login', loginValidation, async (req, res) => {
 
     try {
         const users = await query(
-            'SELECT id, username, email, password FROM users WHERE email = ?',
+            'SELECT id, username, email, password, bio, avatar_url FROM users WHERE email = ?',
             [email]
         );
 
@@ -90,6 +90,13 @@ router.post('/login', loginValidation, async (req, res) => {
         }
 
         const user = users[0];
+        
+        if (!user.password) {
+            return res.status(400).json({
+                errors: [{ msg: 'Ce compte utilise une connexion sociale (Google/GitHub). Veuillez utiliser ce mode de connexion.' }],
+            });
+        }
+
         const isMatch = await bcrypt.compare(password, user.password);
 
         if (!isMatch) {
@@ -106,12 +113,65 @@ router.post('/login', loginValidation, async (req, res) => {
 
         res.json({
             token,
-            user: { id: user.id, username: user.username, email: user.email },
+            user: { 
+                id: user.id, 
+                username: user.username, 
+                email: user.email,
+                bio: user.bio,
+                avatar_url: user.avatar_url
+            },
         });
     } catch (error) {
         console.error(error);
         res.status(500).json({ errors: [{ msg: 'Erreur serveur' }] });
     }
 });
+
+// --- OAuth Routes ---
+const passport = require('passport');
+
+// Google
+router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+router.get('/google/callback', 
+  passport.authenticate('google', { failureRedirect: '/login', session: false }),
+  (req, res) => {
+    const token = jwt.sign(
+        { id: req.user.id },
+        process.env.JWT_SECRET || 'dev_secret_key_123',
+        { expiresIn: '7d' }
+    );
+    const userData = encodeURIComponent(JSON.stringify({
+        id: req.user.id,
+        username: req.user.username,
+        email: req.user.email,
+        bio: req.user.bio,
+        avatar_url: req.user.avatar_url
+    }));
+    res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/oauth-callback?token=${token}&user=${userData}`);
+  }
+);
+
+// GitHub
+router.get('/github', passport.authenticate('github', { scope: ['user:email'] }));
+
+router.get('/github/callback', 
+  passport.authenticate('github', { failureRedirect: '/login', session: false }),
+  (req, res) => {
+    const token = jwt.sign(
+        { id: req.user.id },
+        process.env.JWT_SECRET || 'dev_secret_key_123',
+        { expiresIn: '7d' }
+    );
+    const userData = encodeURIComponent(JSON.stringify({
+        id: req.user.id,
+        username: req.user.username,
+        email: req.user.email,
+        bio: req.user.bio,
+        avatar_url: req.user.avatar_url
+    }));
+    res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/oauth-callback?token=${token}&user=${userData}`);
+  }
+);
 
 module.exports = router;

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import type { ReactNode } from 'react';
 
 interface User {
@@ -16,6 +16,7 @@ interface AuthContextType {
     login: (email: string, password: string) => Promise<{ success: boolean; message?: string }>;
     register: (username: string, email: string, password: string) => Promise<{ success: boolean; errors?: { msg: string }[] }>;
     logout: () => void;
+    externalLogin: (token: string, user: User) => void;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -44,7 +45,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setLoading(false);
     }, []);
 
-    const login = async (email: string, password: string) => {
+    const login = useCallback(async (email: string, password: string) => {
         try {
             const res = await fetch('/api/auth/login', {
                 method: 'POST',
@@ -62,9 +63,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         } catch {
             return { success: false, message: 'Impossible de contacter le serveur' };
         }
-    };
+    }, []);
 
-    const register = async (username: string, email: string, password: string) => {
+    const register = useCallback(async (username: string, email: string, password: string) => {
         try {
             const res = await fetch('/api/auth/register', {
                 method: 'POST',
@@ -82,16 +83,31 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         } catch {
             return { success: false, errors: [{ msg: 'Impossible de contacter le serveur' }] };
         }
-    };
+    }, []);
 
-    const logout = () => {
+    const logout = useCallback(() => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         setUser(null);
-    };
+    }, []);
+
+    const externalLogin = useCallback((token: string, userData: User) => {
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(userData));
+        setUser(userData);
+    }, []);
+
+    const contextValue = useMemo(() => ({
+        user,
+        loading,
+        login,
+        register,
+        logout,
+        externalLogin
+    }), [user, loading, login, register, logout, externalLogin]);
 
     return (
-        <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+        <AuthContext.Provider value={contextValue}>
             {!loading && children}
         </AuthContext.Provider>
     );
