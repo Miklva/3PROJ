@@ -1,11 +1,13 @@
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import { useTranslation } from "../hooks/useTranslation";
 import "./Layout.scss";
 import logo from "../assets/logo.png";
 
 export default function Layout() {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     const handleLogout = () => {
         logout();
@@ -19,18 +21,19 @@ export default function Layout() {
                     <img src={logo} alt="Logo SupContent" className="logo" />
                 </Link>
                 <div className="links">
+                    <Link to="/">{t.nav.home}</Link>
                     {user ? (
                         <>
-                            <Link to="/profile">Profil</Link>
-                            <Link to="/settings">Paramètres</Link>
+                            <Link to="/profile">{t.nav.profile}</Link>
+                            <Link to="/settings">{t.nav.settings}</Link>
                             <button className="btn-nav-logout" onClick={handleLogout}>
-                                Déconnexion
+                                {t.nav.logout}
                             </button>
                         </>
                     ) : (
                         <>
-                            <Link to="/login">Connexion</Link>
-                            <Link to="/register">S'inscrire</Link>
+                            <Link to="/login">Login</Link>
+                            <Link to="/register">Register</Link>
                         </>
                     )}
                 </div>

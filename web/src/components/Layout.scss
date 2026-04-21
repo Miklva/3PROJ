@@ -3,25 +3,22 @@
 body {
   font-family: 'Inter', sans-serif;
   margin: 0;
+  transition: background 0.3s, color 0.3s;
 
   background:
     radial-gradient(
       circle at 15% 20%,
-      rgba(124, 58, 237, 0.25),
+      rgba(var(--color-purple-rgb), 0.1),
       transparent 45%
     ),
     radial-gradient(
       circle at 85% 75%,
-      rgba(99, 102, 241, 0.2),
+      rgba(var(--color-purple-rgb), 0.05),
       transparent 45%
     ),
-    linear-gradient(
-      180deg,
-      #111111 0%,
-      #0a0a0a 100%
-    );
+    var(--color-bg-gradient);
 
-  color: c.$white;
+  color: c.$text;
 }
 
 .layout {
@@ -36,26 +33,20 @@ body {
   align-items: center;
 
   padding: 1rem 2rem;
-
-  background: linear-gradient(
-    180deg,
-    #1a1a1a,
-    #141414
-  );
-
-  border-bottom: 1px solid rgba(124, 58, 237, 0.3);
-
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+  background: var(--color-bg-alt);
+  border-bottom: 1px solid rgba(var(--color-purple-rgb), 0.2);
+  box-shadow: 0 4px 20px rgba(var(--color-bg-rgb), 0.15);
+  transition: background 0.3s, border-color 0.3s;
 }
 
 .navbar a {
   text-decoration: none;
-  color: c.$white;
+  color: c.$text;
   margin-left: 1.5rem;
 }
 
 .navbar a:hover {
-  opacity: 0.7;
+  color: c.$purple-hover;
 }
 
 .logo {
@@ -69,7 +60,7 @@ body {
 .btn-nav-logout {
   background: none;
   border: none;
-  color: white;
+  color: c.$text;
   font-size: inherit;
   font-family: inherit;
   cursor: pointer;
@@ -79,6 +70,6 @@ body {
   transition: opacity 0.2s;
 
   &:hover {
-    opacity: 0.7;
+    color: c.$red;
   }
 }

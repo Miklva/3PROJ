@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useTranslation } from '../hooks/useTranslation';
 import Button from '../components/Button';
 import './Login.scss';
 
@@ -9,6 +10,7 @@ export default function Login() {
     const navigate = useNavigate();
     const location = useLocation();
     const { login } = useAuth();
+    const { t } = useTranslation();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -26,7 +28,7 @@ export default function Login() {
         if (res.success) {
             navigate(from, { replace: true });
         } else {
-            setError(res.message || 'Erreur de connexion');
+            setError(res.message || 'Error');
         }
         setLoading(false);
     };
@@ -38,8 +40,8 @@ export default function Login() {
     return (
         <div className="login-page">
             <div className="login-card">
-                <h2>Se connecter</h2>
-                <p className="login-subtitle">Bienvenue sur SupContent</p>
+                <h2>{t.auth.login_title}</h2>
+                <p className="login-subtitle">{t.auth.login_subtitle}</p>
 
                 {error && (
                     <div className="login-errors">
@@ -49,7 +51,7 @@ export default function Login() {
 
                 <form onSubmit={handleSubmit} className="login-form">
                     <div className="form-group">
-                        <label htmlFor="email">Email</label>
+                        <label htmlFor="email">{t.auth.email}</label>
                         <input
                             id="email"
                             type="email"
@@ -61,11 +63,11 @@ export default function Login() {
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="password">Mot de passe</label>
+                        <label htmlFor="password">{t.auth.password}</label>
                         <input
                             id="password"
                             type="password"
-                            placeholder="Ton mot de passe"
+                            placeholder="••••••••"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
@@ -73,26 +75,26 @@ export default function Login() {
                     </div>
 
                     <Button type="submit" disabled={loading}>
-                        {loading ? 'Connexion...' : 'Se connecter'}
+                        {loading ? t.auth.btn_loading : t.auth.btn_login}
                     </Button>
                 </form>
 
                 <div className="login-divider">
-                    <span>OU</span>
+                    <span>{t.auth.or}</span>
                 </div>
 
                 <div className="social-login">
                     <button className="btn-social google" onClick={() => handleOAuth('google')}>
-                        <i>G</i> Continuer avec Google
+                        <i>G</i> {t.auth.google}
                     </button>
                     <button className="btn-social github" onClick={() => handleOAuth('github')}>
-                        <i>G</i> Continuer avec GitHub
+                        <i>G</i> {t.auth.github}
                     </button>
                 </div>
 
                 <p className="login-register-link">
-                    Pas encore de compte ?{' '}
-                    <Link to="/register">S'inscrire</Link>
+                    {t.auth.no_account}{' '}
+                    <Link to="/register">{t.auth.link_register}</Link>
                 </p>
             </div>
         </div>

@@ -7,6 +7,7 @@
         font-size: 1.5rem;
         font-weight: 700;
         margin-bottom: 1.5rem;
+        color: c.$text;
     }
 
     .grille {
@@ -21,7 +22,8 @@
 
         .poster {
             aspect-ratio: 2 / 3;
-            background: c.$white;
+            background: c.$bg-alt;
+            border: 1px solid c.$border;
             border-radius: 0.5rem;
             overflow: hidden;
             margin-bottom: 0.5rem;
@@ -45,5 +47,6 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        color: c.$text;
     }
 }

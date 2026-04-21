@@ -6,7 +6,10 @@ interface User {
     username: string;
     email: string;
     bio: string | null;
+    website_url: string | null;
     avatar_url: string | null;
+    theme: 'light' | 'dark';
+    language: string;
     role?: string;
 }
 
@@ -44,6 +47,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
         setLoading(false);
     }, []);
+
+    // Gérer l'application du thème
+    useEffect(() => {
+        if (user?.theme) {
+            document.documentElement.setAttribute('data-theme', user.theme);
+        } else {
+            document.documentElement.setAttribute('data-theme', 'dark'); // Par défaut
+        }
+    }, [user?.theme]);
 
     const login = useCallback(async (email: string, password: string) => {
         try {

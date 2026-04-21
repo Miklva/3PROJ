@@ -1,22 +1,37 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import type { FormEvent, ChangeEvent } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { useTranslation } from '../hooks/useTranslation';
 import Button from '../components/Button';
 import './Settings.scss';
 
-type Tab = 'profile' | 'security' | 'data';
+type Tab = 'profile' | 'preferences' | 'security' | 'data';
 
 export default function Settings() {
-    const { user, logout } = useAuth();
+    const { user, logout, externalLogin } = useAuth();
+    const { t } = useTranslation();
     const [activeTab, setActiveTab] = useState<Tab>('profile');
     const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
 
     const [username, setUsername] = useState(user?.username || '');
     const [bio, setBio] = useState(user?.bio || '');
+    const [websiteUrl, setWebsiteUrl] = useState(user?.website_url || '');
+    const [theme, setTheme] = useState(user?.theme || 'dark');
+    const [language, setLanguage] = useState(user?.language || 'fr');
     const [avatarLoading, setAvatarLoading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
+    // Synchroniser l'état local avec l'utilisateur du contexte (utile après un fetch ou update)
+    useEffect(() => {
+        if (user) {
+            setUsername(user.username || '');
+            setBio(user.bio || '');
+            setWebsiteUrl(user.website_url || '');
+            setTheme(user.theme || 'dark');
+            setLanguage(user.language || 'fr');
+        }
+    }, [user]);
 
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
@@ -39,21 +54,51 @@ export default function Settings() {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token()}`,
                 },
-                body: JSON.stringify({ username, bio }),
+                body: JSON.stringify({ username, bio, website_url: websiteUrl }),
             });
             if (res.ok) {
                 const saved = localStorage.getItem('user');
                 if (saved) {
                     const parsed = JSON.parse(saved);
-                    localStorage.setItem('user', JSON.stringify({ ...parsed, username, bio }));
+                    const updatedUser = { ...parsed, username, bio, website_url: websiteUrl };
+                    localStorage.setItem('user', JSON.stringify(updatedUser));
+                    externalLogin(token() || '', updatedUser); // Triggger refresh if needed
                 }
-                showMessage('success', 'Profil mis à jour avec succès');
+                showMessage('success', t.settings.messages.success_profile);
             } else {
                 const data = await res.json();
-                showMessage('error', data.message || 'Erreur lors de la mise à jour');
+                showMessage('error', data.message || 'Error');
             }
         } catch {
-            showMessage('error', 'Impossible de contacter le serveur');
+            showMessage('error', t.settings.messages.error_server);
+        }
+    };
+
+    const handlePreferenceSubmit = async (e: FormEvent) => {
+        e.preventDefault();
+        try {
+            const res = await fetch('/api/users/me', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token()}`,
+                },
+                body: JSON.stringify({ theme, language }),
+            });
+            if (res.ok) {
+                const saved = localStorage.getItem('user');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    const updatedUser = { ...parsed, theme, language };
+                    localStorage.setItem('user', JSON.stringify(updatedUser));
+                    externalLogin(token() || '', updatedUser);
+                }
+                showMessage('success', t.settings.messages.success_prefs);
+            } else {
+                showMessage('error', 'Error');
+            }
+        } catch {
+            showMessage('error', t.settings.messages.error_server);
         }
     };
 
@@ -72,12 +117,21 @@ export default function Settings() {
                 body: formData,
             });
             if (res.ok) {
-                showMessage('success', 'Avatar mis à jour');
+                const data = await res.json();
+                const saved = localStorage.getItem('user');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    const updatedUser = { ...parsed, avatar_url: data.avatar_url };
+                    localStorage.setItem('user', JSON.stringify(updatedUser));
+                    externalLogin(token() || '', updatedUser);
+                }
+                showMessage('success', t.settings.messages.success_avatar);
             } else {
-                showMessage('error', "Erreur lors de l'upload de l'avatar");
+                const data = await res.json();
+                showMessage('error', data.message || "Error");
             }
         } catch {
-            showMessage('error', 'Impossible de contacter le serveur');
+            showMessage('error', t.settings.messages.error_server);
         } finally {
             setAvatarLoading(false);
         }
@@ -86,11 +140,11 @@ export default function Settings() {
     const handlePasswordSubmit = async (e: FormEvent) => {
         e.preventDefault();
         if (newPassword !== confirmPassword) {
-            showMessage('error', 'Les nouveaux mots de passe ne correspondent pas');
+            showMessage('error', t.settings.messages.error_password_match);
             return;
         }
         if (newPassword.length < 6) {
-            showMessage('error', 'Le nouveau mot de passe doit faire au moins 6 caractères');
+            showMessage('error', t.settings.messages.error_password_length);
             return;
         }
         try {
@@ -103,16 +157,16 @@ export default function Settings() {
                 body: JSON.stringify({ currentPassword, newPassword }),
             });
             if (res.ok) {
-                showMessage('success', 'Mot de passe modifié avec succès');
+                showMessage('success', t.settings.messages.success_password);
                 setCurrentPassword('');
                 setNewPassword('');
                 setConfirmPassword('');
             } else {
                 const data = await res.json();
-                showMessage('error', data.message || 'Erreur lors de la modification');
+                showMessage('error', data.message || 'Error');
             }
         } catch {
-            showMessage('error', 'Impossible de contacter le serveur');
+            showMessage('error', t.settings.messages.error_server);
         }
     };
 
@@ -120,22 +174,69 @@ export default function Settings() {
         logout();
     };
 
+    const handleDeleteAccount = async () => {
+        if (!window.confirm(t.settings.account.delete_confirm)) {
+            return;
+        }
+
+        try {
+            const res = await fetch('/api/users/me', {
+                method: 'DELETE',
+                headers: { Authorization: `Bearer ${token()}` },
+            });
+
+            if (res.ok) {
+                showMessage('success', t.settings.messages.success_delete_account);
+                setTimeout(() => {
+                    logout();
+                }, 1500);
+            } else {
+                const data = await res.json();
+                showMessage('error', data.message || 'Error');
+            }
+        } catch {
+            showMessage('error', t.settings.messages.error_server);
+        }
+    };
+
+    const handleExport = async (format: 'json' | 'csv') => {
+        try {
+            const res = await fetch('/api/users/me/export', {
+                headers: { Authorization: `Bearer ${token()}` },
+            });
+            if (!res.ok) throw new Error();
+
+            const blob = await res.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `data-export.${format}`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            showMessage('success', t.settings.messages.success_export);
+        } catch {
+            showMessage('error', "Export Error");
+        }
+    };
+
     return (
         <div className="settings-page">
             <div className="settings-container">
-                <h1 className="settings-title">Paramètres</h1>
+                <h1 className="settings-title">{t.settings.title}</h1>
 
 
                 <div className="settings-tabs">
-                    {(['profile', 'security', 'data'] as Tab[]).map((tab) => (
+                    {(['profile', 'preferences', 'security', 'data'] as Tab[]).map((tab) => (
                         <button
                             key={tab}
                             className={`settings-tab ${activeTab === tab ? 'active' : ''}`}
                             onClick={() => setActiveTab(tab)}
                         >
-                            {tab === 'profile' && 'Profil'}
-                            {tab === 'security' && 'Sécurité'}
-                            {tab === 'data' && 'Compte'}
+                            {tab === 'profile' && t.settings.tabs.profile}
+                            {tab === 'preferences' && t.settings.tabs.preferences}
+                            {tab === 'security' && t.settings.tabs.security}
+                            {tab === 'data' && t.settings.tabs.data}
                         </button>
                     ))}
                 </div>
@@ -153,10 +254,10 @@ export default function Settings() {
 
                     {activeTab === 'profile' && (
                         <form onSubmit={handleProfileSubmit} className="settings-form">
-                            <h2>Informations du profil</h2>
+                            <h2>{t.settings.profile.title}</h2>
 
                             <div className="form-group">
-                                <label>Nom d'utilisateur</label>
+                                <label>{t.settings.profile.username}</label>
                                 <input
                                     type="text"
                                     value={username}
@@ -168,11 +269,11 @@ export default function Settings() {
                             </div>
 
                             <div className="form-group">
-                                <label>Bio</label>
+                                <label>{t.settings.profile.bio}</label>
                                 <textarea
                                     value={bio}
                                     onChange={(e) => setBio(e.target.value)}
-                                    placeholder="Parle-nous de toi..."
+                                    placeholder={t.settings.profile.bio_placeholder}
                                     maxLength={200}
                                     rows={4}
                                 />
@@ -180,7 +281,17 @@ export default function Settings() {
                             </div>
 
                             <div className="form-group">
-                                <label>Avatar</label>
+                                <label>{t.settings.profile.website}</label>
+                                <input
+                                    type="url"
+                                    value={websiteUrl}
+                                    onChange={(e) => setWebsiteUrl(e.target.value)}
+                                    placeholder="https://votre-site.com"
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>{t.settings.profile.avatar}</label>
                                 <div className="avatar-upload-box">
                                     {user?.avatar_url && (
                                         <img src={user.avatar_url} alt="avatar actuel" className="current-avatar" />
@@ -191,7 +302,7 @@ export default function Settings() {
                                         onClick={() => fileInputRef.current?.click()}
                                         disabled={avatarLoading}
                                     >
-                                        {avatarLoading ? 'Upload en cours...' : '📸 Changer l\'avatar'}
+                                        {avatarLoading ? t.settings.profile.uploading : `📸 ${t.settings.profile.change_avatar}`}
                                     </button>
                                     <input
                                         ref={fileInputRef}
@@ -203,21 +314,62 @@ export default function Settings() {
                                 </div>
                             </div>
 
-                            <Button type="submit">Sauvegarder les modifications</Button>
+                            <Button type="submit">{t.settings.profile.save}</Button>
+                        </form>
+                    )}
+
+                    {activeTab === 'preferences' && (
+                        <form onSubmit={handlePreferenceSubmit} className="settings-form">
+                            <h2>{t.settings.preferences.title}</h2>
+
+                            <div className="form-group">
+                                <label>{t.settings.preferences.theme}</label>
+                                <div className="theme-toggle-group">
+                                    <button
+                                        type="button"
+                                        className={`theme-btn ${theme === 'light' ? 'active' : ''}`}
+                                        onClick={() => setTheme('light')}
+                                    >
+                                        ☀️ {t.settings.preferences.theme_light}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className={`theme-btn ${theme === 'dark' ? 'active' : ''}`}
+                                        onClick={() => setTheme('dark')}
+                                    >
+                                        🌙 {t.settings.preferences.theme_dark}
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="form-group">
+                                <label>{t.settings.preferences.language}</label>
+                                <select
+                                    className="lang-select"
+                                    value={language}
+                                    onChange={(e) => setLanguage(e.target.value)}
+                                >
+                                    <option value="fr">Français</option>
+                                    <option value="en">English</option>
+                                    <option value="es">Español</option>
+                                </select>
+                            </div>
+
+                            <Button type="submit">{t.settings.preferences.save}</Button>
                         </form>
                     )}
 
 
                     {activeTab === 'security' && (
                         <form onSubmit={handlePasswordSubmit} className="settings-form">
-                            <h2>Changer le mot de passe</h2>
+                            <h2>{t.settings.security.title}</h2>
 
                             <div className="settings-warning">
-                                ⚠️ Assure-toi de te souvenir de ton nouveau mot de passe.
+                                ⚠️ {t.settings.security.warning}
                             </div>
 
                             <div className="form-group">
-                                <label>Mot de passe actuel</label>
+                                <label>{t.settings.security.current}</label>
                                 <input
                                     type="password"
                                     value={currentPassword}
@@ -228,19 +380,19 @@ export default function Settings() {
                             </div>
 
                             <div className="form-group">
-                                <label>Nouveau mot de passe</label>
+                                <label>{t.settings.security.new}</label>
                                 <input
                                     type="password"
                                     value={newPassword}
                                     onChange={(e) => setNewPassword(e.target.value)}
                                     required
                                     minLength={6}
-                                    placeholder="6 caractères minimum"
+                                    placeholder={t.settings.security.new_placeholder}
                                 />
                             </div>
 
                             <div className="form-group">
-                                <label>Confirmer le nouveau mot de passe</label>
+                                <label>{t.settings.security.confirm}</label>
                                 <input
                                     type="password"
                                     value={confirmPassword}
@@ -250,32 +402,45 @@ export default function Settings() {
                                 />
                             </div>
 
-                            <Button type="submit">Modifier le mot de passe</Button>
+                            <Button type="submit">{t.settings.security.save}</Button>
                         </form>
                     )}
 
 
                     {activeTab === 'data' && (
                         <div className="settings-form">
-                            <h2>Gestion du compte</h2>
+                            <h2>{t.settings.account.title}</h2>
 
                             <div className="settings-section">
-                                <h3>Informations du compte</h3>
+                                <h3>{t.settings.account.info_subtitle}</h3>
                                 <p className="settings-info-line">
-                                    <span>Nom d'utilisateur :</span>
+                                    <span>{t.settings.profile.username} :</span>
                                     <strong>{user?.username}</strong>
                                 </p>
                                 <p className="settings-info-line">
-                                    <span>Email :</span>
+                                    <span>{t.settings.account.email} :</span>
                                     <strong>{user?.email}</strong>
                                 </p>
                             </div>
 
+                            <div className="settings-section">
+                                <h3>{t.settings.account.data_subtitle}</h3>
+                                <p>{t.settings.account.data_desc}</p>
+                                <div className="export-actions">
+                                    <button className="btn-export" onClick={() => handleExport('json')}>
+                                        📤 {t.settings.account.export_btn}
+                                    </button>
+                                </div>
+                            </div>
+
                             <div className="settings-section danger-zone">
-                                <h3>Zone de danger</h3>
-                                <p>Déconnecter ton compte sur cet appareil.</p>
+                                <h3>{t.settings.account.danger_title}</h3>
+                                <p>{t.settings.account.danger_desc}</p>
                                 <button className="btn-logout-settings" onClick={handleLogout}>
-                                    Se déconnecter
+                                    {t.settings.account.logout}
+                                </button>
+                                <button className="btn-delete-account" onClick={handleDeleteAccount}>
+                                    🗑️ {t.settings.account.delete_account}
                                 </button>
                             </div>
                         </div>

@@ -9,8 +9,8 @@
 }
 
 .profile-card {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.09);
+    background: rgba(var(--color-text-rgb), 0.03);
+    border: 1px solid c.$border;
     border-radius: 16px;
     padding: 2.5rem 2rem;
     width: 100%;
@@ -19,7 +19,7 @@
     flex-direction: column;
     gap: 1.5rem;
     backdrop-filter: blur(12px);
-    box-shadow: 0 0 0 1px rgba(c.$purple, 0.08), 0 20px 60px rgba(0, 0, 0, 0.35);
+    box-shadow: 0 0 0 1px rgba(var(--color-purple-rgb), 0.08), 0 20px 60px rgba(var(--color-bg-rgb), 0.35);
 }
 
 .profile-header {
@@ -38,8 +38,8 @@
     border-radius: 50%;
     overflow: hidden;
     margin-bottom: 0.5rem;
-    border: 2px solid rgba(c.$purple, 0.5);
-    box-shadow: 0 0 0 4px rgba(c.$purple, 0.12);
+    border: 2px solid rgba(var(--color-purple-rgb), 0.5);
+    box-shadow: 0 0 0 4px rgba(var(--color-purple-rgb), 0.12);
     transition: transform 0.2s;
 
     &:hover {
@@ -58,7 +58,7 @@
     width: 100%;
     height: 100%;
     background: linear-gradient(135deg, c.$dark-purple, c.$purple);
-    color: c.$white;
+    color: #fff;
     font-size: 2.5rem;
     font-weight: 700;
     display: flex;
@@ -70,7 +70,7 @@
     position: absolute;
     inset: 0;
     background: rgba(0, 0, 0, 0.55);
-    color: c.$white;
+    color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -83,14 +83,14 @@
     margin: 0;
     font-size: 1.6rem;
     font-weight: 800;
-    color: c.$white;
+    color: c.$text;
     letter-spacing: -0.03em;
 }
 
 .profile-email {
     margin: 0;
     font-size: 0.875rem;
-    color: rgba(255, 255, 255, 0.4);
+    color: c.$text-muted;
 }
 
 .profile-stats {
@@ -98,8 +98,8 @@
     justify-content: center;
     gap: 0;
     padding: 1.25rem 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.07);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    border-top: 1px solid c.$border;
+    border-bottom: 1px solid c.$border;
 }
 
 .stat-item {
@@ -109,19 +109,19 @@
     flex: 1;
 
     & + & {
-        border-left: 1px solid rgba(255, 255, 255, 0.07);
+        border-left: 1px solid c.$border;
     }
 }
 
 .stat-count {
     font-size: 1.3rem;
     font-weight: 700;
-    color: c.$white;
+    color: c.$text;
 }
 
 .stat-label {
     font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.4);
+    color: c.$text-muted;
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -141,7 +141,7 @@
             margin: 0;
             font-size: 0.8rem;
             font-weight: 700;
-            color: rgba(255, 255, 255, 0.5);
+            color: c.$text-muted;
             text-transform: uppercase;
             letter-spacing: 0.06em;
         }
@@ -152,7 +152,7 @@
     margin: 0;
     font-size: 0.95rem;
     line-height: 1.6;
-    color: rgba(255, 255, 255, 0.65);
+    color: c.$text-dim;
     white-space: pre-wrap;
 }
 
@@ -160,22 +160,22 @@
     width: 100%;
     min-height: 80px;
     padding: 0.75rem 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid c.$border;
     border-radius: 8px;
-    background: rgba(255, 255, 255, 0.05);
-    color: c.$white;
+    background: rgba(var(--color-text-rgb), 0.05);
+    color: c.$text;
     font-family: inherit;
     font-size: 0.95rem;
     resize: vertical;
     transition: border-color 0.2s, box-shadow 0.2s;
     box-sizing: border-box;
 
-    &::placeholder { color: rgba(255, 255, 255, 0.2); }
+    &::placeholder { color: c.$text-muted; }
 
     &:focus {
         outline: none;
-        border-color: rgba(c.$purple, 0.7);
-        box-shadow: 0 0 0 3px rgba(c.$purple, 0.15);
+        border-color: c.$purple;
+        box-shadow: 0 0 0 3px rgba(var(--color-purple-rgb), 0.15);
     }
 }
 
@@ -191,7 +191,7 @@
     font-family: inherit;
 }
 
-.btn-edit-bio  { color: c.$light-purple; }
+.btn-edit-bio  { color: c.$purple; }
 .btn-save-bio  { color: c.$green; margin-right: 0.75rem; }
 .btn-cancel-bio { color: c.$light-red; }
 
@@ -201,15 +201,15 @@
     display: flex;
     justify-content: space-between;
     font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.4);
+    color: c.$text-muted;
     padding: 0.4rem 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(var(--color-text-rgb), 0.05);
 
     &:last-child { border-bottom: none; }
 }
 
 .profile-info-value {
-    color: rgba(255, 255, 255, 0.75);
+    color: c.$text-dim;
     font-weight: 500;
 }
 
@@ -228,5 +228,35 @@
     &:hover {
         background: rgba(c.$red, 0.12);
         border-color: rgba(c.$red, 0.55);
+    }
+}
+
+.profile-website-section {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: rgba(var(--color-text-rgb), 0.04);
+    border: 1px solid c.$border;
+    border-radius: 10px;
+    margin-top: 0.5rem;
+
+    .website-icon {
+        font-size: 1.1rem;
+        opacity: 0.8;
+    }
+
+    .website-link {
+        color: c.$purple;
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: color 0.2s;
+        word-break: break-all;
+
+        &:hover {
+            color: c.$purple-hover;
+            text-decoration: underline;
+        }
     }
 }

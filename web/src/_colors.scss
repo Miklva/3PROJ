@@ -1,30 +1,81 @@
-// Noir / Blanc
-$black: #0f0f0f;
+:root {
+  // Mode Sombre (Par défaut)
+  --color-bg-rgb: 15, 15, 15;
+  --color-bg: #0f0f0f;
+  --color-bg-alt: #1a1a1a;
+  --color-bg-gradient: linear-gradient(180deg, #111111 0%, #0a0a0a 100%);
+  
+  --color-text-rgb: 255, 255, 255;
+  --color-text: #ffffff;
+  --color-text-dim: rgba(255, 255, 255, 0.6);
+  --color-text-muted: rgba(255, 255, 255, 0.35);
+  
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border-hover: rgba(255, 255, 255, 0.15);
+  
+  --color-purple-rgb: 124, 58, 237;
+  --color-purple: #7c3aed;
+  --color-purple-hover: #6d28d9;
+  
+  --color-red: #e50914;
+  --color-light-red: #ff4d4d;
+  --color-green: #22c55e;
+  --color-yellow: #facc15;
+}
 
-$dark-gray: #1a1a1a;
-$gray: #2a2a2a;
-$light-gray: #e5e5e5;
-$white: #ffffff;
+[data-theme='light'] {
+  --color-bg-rgb: 255, 255, 255;
+  --color-bg: #f8f9fa;
+  --color-bg-alt: #ffffff;
+  --color-bg-gradient: linear-gradient(180deg, #ffffff 0%, #f1f3f5 100%);
+  
+  --color-text-rgb: 15, 15, 15;
+  --color-text: #0f0f0f;
+  --color-text-dim: rgba(15, 15, 15, 0.65);
+  --color-text-muted: rgba(15, 15, 15, 0.4);
+  
+  --color-border: rgba(15, 15, 15, 0.1);
+  --color-border-hover: rgba(15, 15, 15, 0.2);
+  
+  // Dans le thème clair, on garde le violet pour les boutons mais un peu plus saturé
+  --color-purple: #6d28d9;
+  --color-purple-rgb: 109, 40, 217;
+}
 
-// Rouge
-$red: #e50914;
-$dark-red: #b20710;
-$light-red: #ff4d4d;
+// SCSS Variables for use in components (aliases)
+$bg: var(--color-bg);
+$bg-alt: var(--color-bg-alt);
+$bg-gradient: var(--color-bg-gradient);
 
-// Bleu
+$text: var(--color-text);
+$text-dim: var(--color-text-dim);
+$text-muted: var(--color-text-muted);
+
+$border: var(--color-border);
+$border-hover: var(--color-border-hover);
+
+$purple: var(--color-purple);
+$purple-rgb: var(--color-purple-rgb);
+$purple-hover: var(--color-purple-hover);
+$dark-purple: var(--color-purple-hover);
+$light-purple: #a78bfa; // Backup value
+$red: var(--color-red);
+$light-red: var(--color-light-red);
+$green: var(--color-green);
+$yellow: var(--color-yellow);
+
+$gray: #9ca3af;
+$dark-gray: #4b5563;
+$light-gray: #e5e7eb;
+
 $blue: #2563eb;
 $dark-blue: #1e40af;
-$light-blue: #edf5ff;
+$light-blue: #eff6ff;
 
-//Violet
-$purple: #7c3aed;
-$dark-purple: #5b21b6;
-$light-purple: #a78bfa;
-
-// Vert
-$green: #22c55e;
 $dark-green: #15803d;
 
-// Jaune
-$yellow: #facc15;
-$orange: #f97316;
+// Old aliases for legacy if needed, but better to migrate
+$white: var(--color-text);
+$white-rgb: var(--color-text-rgb);
+$black: var(--color-bg);
+$black-rgb: var(--color-bg-rgb);

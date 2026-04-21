@@ -3,6 +3,26 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const GitHubStrategy = require('passport-github2').Strategy;
 const { query } = require('./database');
 
+async function ensureUniqueUsername(baseUsername) {
+    let username = baseUsername;
+    let isUnique = false;
+    let suffix = 1;
+
+    // Nettoyer le nom d'utilisateur (pas d'espaces, etc.)
+    username = username.replace(/\s+/g, '_').toLowerCase();
+
+    while (!isUnique) {
+        const users = await query('SELECT id FROM users WHERE username = ?', [username]);
+        if (users.length === 0) {
+            isUnique = true;
+        } else {
+            username = `${baseUsername.replace(/\s+/g, '_').toLowerCase()}${suffix}`;
+            suffix++;
+        }
+    }
+    return username;
+}
+
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID || 'google-id-placeholder',
     clientSecret: process.env.GOOGLE_CLIENT_SECRET || 'google-secret-placeholder',
@@ -27,7 +47,8 @@ passport.use(new GoogleStrategy({
       }
 
       // Créer un nouvel utilisateur si n'existe pas
-      const username = profile.displayName || profile.username || email.split('@')[0];
+      const baseUsername = profile.displayName || profile.username || email.split('@')[0];
+      const username = await ensureUniqueUsername(baseUsername);
       const avatar_url = profile.photos && profile.photos[0] ? profile.photos[0].value : null;
 
       const result = await query(
@@ -71,7 +92,8 @@ passport.use(new GitHubStrategy({
         return done(null, user);
       }
 
-      const username = profile.username || profile.displayName || email.split('@')[0];
+      const baseUsername = profile.username || profile.displayName || email.split('@')[0];
+      const username = await ensureUniqueUsername(baseUsername);
       const avatar_url = profile.photos && profile.photos[0] ? profile.photos[0].value : null;
 
       const result = await query(

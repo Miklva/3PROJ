@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import type { ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from '../hooks/useTranslation';
 import './Profile.scss';
 
 interface User {
@@ -8,7 +9,10 @@ interface User {
     username: string;
     email: string;
     bio: string | null;
+    website_url: string | null;
     avatar_url: string | null;
+    theme: string;
+    language: string;
     followers_count: number;
     following_count: number;
     created_at: string;
@@ -17,6 +21,7 @@ interface User {
 export default function Profile() {
     const navigate = useNavigate();
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const { t, lang } = useTranslation();
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -45,7 +50,7 @@ export default function Profile() {
                     localStorage.removeItem('token');
                     navigate('/register');
                 }
-                throw new Error('Erreur lors du chargement du profil');
+                throw new Error(lang === 'fr' ? 'Erreur lors du chargement du profil' : 'Error loading profile');
             }
 
             const data = await res.json();
@@ -115,7 +120,7 @@ export default function Profile() {
         }
     };
 
-    if (loading) return <div className="profile-page"><div className="profile-loading">Chargement...</div></div>;
+    if (loading) return <div className="profile-page"><div className="profile-loading">{lang === 'fr' ? 'Chargement...' : 'Loading...'}</div></div>;
     if (error) return <div className="profile-page"><div className="profile-error">{error}</div></div>;
 
     return (
@@ -149,23 +154,23 @@ export default function Profile() {
                 <div className="profile-stats">
                     <div className="stat-item">
                         <span className="stat-count">{user?.followers_count}</span>
-                        <span className="stat-label">Abonnés</span>
+                        <span className="stat-label">{t.profile.followers}</span>
                     </div>
                     <div className="stat-item">
                         <span className="stat-count">{user?.following_count}</span>
-                        <span className="stat-label">Abonnements</span>
+                        <span className="stat-label">{t.profile.following}</span>
                     </div>
                 </div>
 
                 <div className="profile-bio-section">
                     <div className="bio-header">
-                        <h3>Bio</h3>
+                        <h3>{t.settings.profile.bio}</h3>
                         {!isEditingBio ? (
-                            <button className="btn-edit-bio" onClick={() => setIsEditingBio(true)}>Éditer</button>
+                            <button className="btn-edit-bio" onClick={() => setIsEditingBio(true)}>{t.profile.edit_bio}</button>
                         ) : (
                             <div className="bio-actions">
-                                <button className="btn-save-bio" onClick={handleUpdateBio}>Sauvegarder</button>
-                                <button className="btn-cancel-bio" onClick={() => setIsEditingBio(false)}>Annuler</button>
+                                <button className="btn-save-bio" onClick={handleUpdateBio}>{t.profile.save_bio}</button>
+                                <button className="btn-cancel-bio" onClick={() => setIsEditingBio(false)}>{t.profile.cancel_bio}</button>
                             </div>
                         )}
                     </div>
@@ -175,19 +180,33 @@ export default function Profile() {
                             className="bio-input"
                             value={newBio}
                             onChange={(e) => setNewBio(e.target.value)}
-                            placeholder="Raconte-nous ta vie..."
+                            placeholder="..."
                             maxLength={200}
                         />
                     ) : (
-                        <p className="bio-text">{user?.bio || "Aucune bio pour le moment."}</p>
+                        <p className="bio-text">{user?.bio || t.profile.no_bio}</p>
                     )}
                 </div>
 
+                {user?.website_url && (
+                    <div className="profile-website-section">
+                        <span className="website-icon">🔗</span>
+                        <a 
+                            href={user.website_url.startsWith('http') ? user.website_url : `https://${user.website_url}`} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="website-link"
+                        >
+                            {user.website_url.replace(/^https?:\/\//, '')}
+                        </a>
+                    </div>
+                )}
+
                 <div className="profile-info">
                     <div className="profile-info-item">
-                        <span className="profile-info-label">Membre depuis</span>
+                        <span className="profile-info-label">{t.profile.member_since}</span>
                         <span className="profile-info-value">
-                            {user?.created_at ? new Date(user.created_at).toLocaleDateString('fr-FR', {
+                            {user?.created_at ? new Date(user.created_at).toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-US', {
                                 year: 'numeric',
                                 month: 'long',
                                 day: 'numeric',
@@ -197,7 +216,7 @@ export default function Profile() {
                 </div>
 
                 <button className="btn-logout" onClick={handleLogout}>
-                    Se déconnecter
+                    {t.nav.logout}
                 </button>
             </div>
         </div>
