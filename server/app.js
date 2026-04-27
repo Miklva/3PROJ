@@ -17,6 +17,9 @@ const usersRoutes = require('./src/routes/users');
 app.use('/api/auth', authRoutes);
 app.use('/api/users', usersRoutes);
 
+const mediaRoutes = require('./src/routes/media');
+app.use('/api/media', mediaRoutes);
+
 app.get('/', (req, res) => {
   res.send('SupContent Server is running!');
 });

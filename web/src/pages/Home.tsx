@@ -3,6 +3,7 @@ import axios from 'axios';
 import type { Media } from "../types";
 import "./Home.scss";
 import Button from "../components/Button";
+import MediaCard from "../components/MediaCard";
 
 export default function Home() {
 
@@ -26,7 +27,6 @@ export default function Home() {
         fetchFeed();
     }, [limited]);
 
-
     return (
         <div>
             <section className="tendance">
@@ -34,18 +34,7 @@ export default function Home() {
 
                 <div className="grille">
                     {feed.map((media) => (
-                        <div className="carte" key={media.id}>
-                            <div className="poster">
-                                <img
-                                    src={`https://image.tmdb.org/t/p/w500${media.poster_path}`}
-                                    alt={media.title || media.name || "Inconnu"}
-                                />
-                            </div>
-
-                            <h3 className="nom">
-                                {media.title || media.name || "Inconnu"}
-                            </h3>
-                        </div>
+                        <MediaCard key={media.id} media={media} />
                     ))}
                 </div>
 

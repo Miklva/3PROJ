@@ -5,7 +5,7 @@ import Profile from './pages/Profile';
 import Settings from './pages/Settings';
 import Register from './pages/Register';
 import Login from './pages/Login';
-import OAuthCallback from './pages/OAuthCallback';
+import MediaDetail from './pages/MediaDetail';
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -18,7 +18,7 @@ function App() {
                         <Route path="/" element={<Home />} />
                         <Route path="/login" element={<Login />} />
                         <Route path="/register" element={<Register />} />
-                        <Route path="/oauth-callback" element={<OAuthCallback />} />
+                        <Route path="/media/:type/:id" element={<MediaDetail />} />
                         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                         <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
                     </Route>
