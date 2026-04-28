@@ -25,3 +25,15 @@ CREATE TABLE IF NOT EXISTS subscriptions (
     FOREIGN KEY (following_id) REFERENCES users(id) ON DELETE CASCADE,
     UNIQUE (follower_id, following_id)
 );
+
+CREATE TABLE IF NOT EXISTS reviews (
+    id          INT AUTO_INCREMENT PRIMARY KEY,
+    user_id     INT NOT NULL,
+    tmdb_id     INT NOT NULL,
+    media_type  ENUM('movie', 'tv') NOT NULL,
+    rating      TINYINT CHECK (rating BETWEEN 1 AND 5),
+    comment     TEXT,
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_review (user_id, tmdb_id, media_type),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);

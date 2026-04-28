@@ -20,6 +20,9 @@ app.use('/api/users', usersRoutes);
 const mediaRoutes = require('./src/routes/media');
 app.use('/api/media', mediaRoutes);
 
+const reviewsRoutes = require('./src/routes/reviews');
+app.use('/api/reviews', reviewsRoutes);
+
 app.get('/', (req, res) => {
   res.send('SupContent Server is running!');
 });

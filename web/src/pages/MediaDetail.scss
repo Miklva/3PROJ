@@ -31,9 +31,7 @@
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
-.media-detail {
-  min-height: 100vh;
-}
+.media-detail { min-height: 100vh; }
 
 .backdrop {
   position: absolute;
@@ -110,30 +108,13 @@
   flex-direction: column;
   gap: 0.75rem;
 
-  h1 {
-    font-size: 2rem;
-    font-weight: 800;
-    margin: 0;
-  }
-
-  .year {
-    font-size: 1.4rem;
-    font-weight: 400;
-    color: rgba(255, 255, 255, 0.5);
-  }
+  h1 { font-size: 2rem; font-weight: 800; margin: 0; }
+  .year { font-size: 1.4rem; font-weight: 400; color: rgba(255, 255, 255, 0.5); }
 }
 
-.tagline {
-  color: rgba(255, 255, 255, 0.5);
-  font-style: italic;
-  margin: 0;
-}
+.tagline { color: rgba(255, 255, 255, 0.5); font-style: italic; margin: 0; }
 
-.tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-}
+.tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
 
 .tag {
   padding: 0.25rem 0.75rem;
@@ -157,17 +138,11 @@
   display: flex;
   gap: 0.5rem;
   font-size: 0.85rem;
-
   strong { color: rgba(255, 255, 255, 0.5); min-width: 140px; }
-  span   { color: c.$white; }
+  span { color: c.$white; }
 }
 
-.overview {
-  color: rgba(255, 255, 255, 0.8);
-  line-height: 1.7;
-  font-size: 0.9rem;
-  margin: 0;
-}
+.overview { color: rgba(255, 255, 255, 0.8); line-height: 1.7; font-size: 0.9rem; margin: 0; }
 
 .section {
   position: relative;
@@ -218,38 +193,51 @@
   }
 }
 
-.cast-name {
-  font-size: 0.75rem;
-  font-weight: 600;
-  margin: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+.cast-name { font-size: 0.75rem; font-weight: 600; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cast-role { font-size: 0.7rem; color: rgba(255, 255, 255, 0.4); margin: 0.1rem 0 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-.cast-role {
-  font-size: 0.7rem;
-  color: rgba(255, 255, 255, 0.4);
-  margin: 0.1rem 0 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.actions {
+.review-form {
   display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+  max-width: 600px;
 
-.action-card {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 0.5rem;
-  padding: 1rem 1.25rem;
+  &__label {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin: 0;
+  }
 
-  p { font-size: 0.8rem; color: rgba(255, 255, 255, 0.5); margin: 0 0 0.5rem; }
-  small { font-size: 0.8rem; color: rgba(255, 255, 255, 0.4); }
+  textarea {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 0.4rem;
+    color: c.$white;
+    padding: 0.6rem 0.8rem;
+    font-size: 0.9rem;
+    font-family: inherit;
+    resize: vertical;
+    &:focus { outline: none; border-color: c.$purple; }
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    button:last-child {
+      background: c.$purple;
+      border: none;
+      color: c.$white;
+      padding: 0.4rem 1.2rem;
+      border-radius: 2rem;
+      cursor: pointer;
+      font-size: 0.85rem;
+      &:hover { background: c.$dark-purple; }
+      &:disabled { opacity: 0.4; cursor: default; }
+    }
+  }
 }
 
 .star-rating { display: flex; gap: 0.2rem; }
@@ -278,39 +266,32 @@
 .guest-msg {
   color: rgba(255, 255, 255, 0.4);
   font-size: 0.9rem;
+  margin-bottom: 1.5rem;
   a { color: c.$light-purple; text-decoration: none; &:hover { text-decoration: underline; } }
 }
 
-.comment-form {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
+.review-list { display: flex; flex-direction: column; gap: 0.5rem; }
 
-  textarea {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 0.4rem;
-    color: c.$white;
-    padding: 0.6rem 0.8rem;
-    font-size: 0.9rem;
-    font-family: inherit;
-    resize: vertical;
-    &:focus { outline: none; border-color: c.$purple; }
+.review-card {
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 0.5rem;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.4rem;
+
+    strong { font-size: 0.9rem; color: c.$light-purple; }
   }
 
-  button {
-    align-self: flex-end;
-    background: c.$purple;
-    border: none;
-    color: c.$white;
-    padding: 0.4rem 1.2rem;
-    border-radius: 2rem;
-    cursor: pointer;
-    font-size: 0.85rem;
-    &:hover { background: c.$dark-purple; }
-    &:disabled { opacity: 0.4; cursor: default; }
-  }
+  &__rating { color: c.$yellow; font-size: 0.85rem; letter-spacing: 0.05em; }
+
+  &__date { font-size: 0.75rem; color: rgba(255, 255, 255, 0.3); margin-left: auto; }
+
+  &__comment { margin: 0; font-size: 0.9rem; color: rgba(255, 255, 255, 0.8); line-height: 1.5; }
 }
 
 .no-content {
@@ -318,12 +299,4 @@
   font-size: 0.85rem;
   text-align: center;
   padding: 1.5rem;
-}
-
-.comment {
-  padding: 0.75rem 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-
-  strong { font-size: 0.85rem; color: c.$light-purple; }
-  p { margin: 0.3rem 0 0; font-size: 0.9rem; color: rgba(255, 255, 255, 0.8); line-height: 1.5; }
 }
