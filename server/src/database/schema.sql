@@ -37,3 +37,25 @@ CREATE TABLE IF NOT EXISTS reviews (
     UNIQUE KEY unique_review (user_id, tmdb_id, media_type),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS lists (
+    id          INT AUTO_INCREMENT PRIMARY KEY,
+    user_id     INT NOT NULL,
+    name        VARCHAR(100) NOT NULL,
+    is_default  BOOLEAN DEFAULT FALSE,
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS list_items (
+    id          INT AUTO_INCREMENT PRIMARY KEY,
+    list_id     INT NOT NULL,
+    tmdb_id     INT NOT NULL,
+    media_type  ENUM('movie', 'tv') NOT NULL,
+    title       VARCHAR(255) NOT NULL,
+    poster_path VARCHAR(255) DEFAULT NULL,
+    added_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_item (list_id, tmdb_id, media_type),
+    FOREIGN KEY (list_id) REFERENCES lists(id) ON DELETE CASCADE
+);
+

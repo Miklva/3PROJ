@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import type { ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { useTranslation } from '../hooks/useTranslation';
 import './Profile.scss';
 
@@ -18,10 +19,13 @@ interface User {
     created_at: string;
 }
 
+type List = { id: number; name: string; is_default: boolean };
+
 export default function Profile() {
     const navigate = useNavigate();
     const fileInputRef = useRef<HTMLInputElement>(null);
     const { t, lang } = useTranslation();
+
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -29,30 +33,27 @@ export default function Profile() {
     const [newBio, setNewBio] = useState('');
     const [isUpdatingAvatar, setIsUpdatingAvatar] = useState(false);
 
+    const [lists, setLists] = useState<List[]>([]);
+    const [newListName, setNewListName] = useState('');
+    const [showNewListInput, setShowNewListInput] = useState(false);
+
+    const token = localStorage.getItem('token');
+
     useEffect(() => {
         fetchUserData();
+        fetchLists();
     }, []);
 
     const fetchUserData = async () => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            navigate('/register');
-            return;
-        }
-
+        if (!token) { navigate('/register'); return; }
         try {
             const res = await fetch('/api/users/me', {
                 headers: { Authorization: `Bearer ${token}` },
             });
-
             if (!res.ok) {
-                if (res.status === 401) {
-                    localStorage.removeItem('token');
-                    navigate('/register');
-                }
+                if (res.status === 401) { localStorage.removeItem('token'); navigate('/register'); }
                 throw new Error(lang === 'fr' ? 'Erreur lors du chargement du profil' : 'Error loading profile');
             }
-
             const data = await res.json();
             setUser(data);
             setNewBio(data.bio || '');
@@ -63,23 +64,28 @@ export default function Profile() {
         }
     };
 
+    const fetchLists = async () => {
+        if (!token) return;
+        try {
+            const res = await axios.get('/api/lists/me', { headers: { Authorization: `Bearer ${token}` } });
+            setLists(res.data);
+        } catch (err) {
+            console.error('Erreur chargement listes', err);
+        }
+    };
+
     const handleLogout = () => {
         localStorage.removeItem('token');
         navigate('/register');
     };
 
     const handleUpdateBio = async () => {
-        const token = localStorage.getItem('token');
         try {
             const res = await fetch('/api/users/me', {
                 method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
-                },
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
                 body: JSON.stringify({ bio: newBio }),
             });
-
             if (res.ok) {
                 setUser(user ? { ...user, bio: newBio } : null);
                 setIsEditingBio(false);
@@ -89,18 +95,13 @@ export default function Profile() {
         }
     };
 
-    const handleAvatarClick = () => {
-        fileInputRef.current?.click();
-    };
+    const handleAvatarClick = () => fileInputRef.current?.click();
 
     const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
-
-        const token = localStorage.getItem('token');
         const formData = new FormData();
         formData.append('avatar', file);
-
         setIsUpdatingAvatar(true);
         try {
             const res = await fetch('/api/users/me/avatar', {
@@ -108,7 +109,6 @@ export default function Profile() {
                 headers: { Authorization: `Bearer ${token}` },
                 body: formData,
             });
-
             if (res.ok) {
                 const data = await res.json();
                 setUser(user ? { ...user, avatar_url: data.avatar_url } : null);
@@ -120,12 +120,34 @@ export default function Profile() {
         }
     };
 
+    const handleCreateList = async () => {
+        if (!newListName.trim()) return;
+        try {
+            const res = await axios.post('/api/lists', { name: newListName }, { headers: { Authorization: `Bearer ${token}` } });
+            setLists(prev => [...prev, res.data]);
+            setNewListName('');
+            setShowNewListInput(false);
+        } catch (err) {
+            console.error('Erreur création liste', err);
+        }
+    };
+
+    const handleDeleteList = async (listId: number) => {
+        try {
+            await axios.delete(`/api/lists/${listId}`, { headers: { Authorization: `Bearer ${token}` } });
+            setLists(prev => prev.filter(l => l.id !== listId));
+        } catch (err) {
+            console.error('Erreur suppression liste', err);
+        }
+    };
+
     if (loading) return <div className="profile-page"><div className="profile-loading">{lang === 'fr' ? 'Chargement...' : 'Loading...'}</div></div>;
     if (error) return <div className="profile-page"><div className="profile-error">{error}</div></div>;
 
     return (
         <div className="profile-page">
             <div className="profile-card">
+
                 <div className="profile-header">
                     <div className="avatar-container" onClick={handleAvatarClick}>
                         {user?.avatar_url ? (
@@ -135,18 +157,9 @@ export default function Profile() {
                                 {user?.username.charAt(0).toUpperCase()}
                             </div>
                         )}
-                        <div className="avatar-overlay">
-                            {isUpdatingAvatar ? '...' : '📸'}
-                        </div>
-                        <input
-                            type="file"
-                            ref={fileInputRef}
-                            onChange={handleFileChange}
-                            style={{ display: 'none' }}
-                            accept="image/*"
-                        />
+                        <div className="avatar-overlay">{isUpdatingAvatar ? '...' : '📸'}</div>
+                        <input type="file" ref={fileInputRef} onChange={handleFileChange} style={{ display: 'none' }} accept="image/*" />
                     </div>
-
                     <h2 className="profile-username">{user?.username}</h2>
                     <p className="profile-email">{user?.email}</p>
                 </div>
@@ -174,15 +187,8 @@ export default function Profile() {
                             </div>
                         )}
                     </div>
-
                     {isEditingBio ? (
-                        <textarea
-                            className="bio-input"
-                            value={newBio}
-                            onChange={(e) => setNewBio(e.target.value)}
-                            placeholder="..."
-                            maxLength={200}
-                        />
+                        <textarea className="bio-input" value={newBio} onChange={(e) => setNewBio(e.target.value)} placeholder="..." maxLength={200} />
                     ) : (
                         <p className="bio-text">{user?.bio || t.profile.no_bio}</p>
                     )}
@@ -191,33 +197,62 @@ export default function Profile() {
                 {user?.website_url && (
                     <div className="profile-website-section">
                         <span className="website-icon">🔗</span>
-                        <a 
-                            href={user.website_url.startsWith('http') ? user.website_url : `https://${user.website_url}`} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="website-link"
+                        <a
+                            href={user.website_url.startsWith('http') ? user.website_url : `https://${user.website_url}`}
+                            target="_blank" rel="noopener noreferrer" className="website-link"
                         >
                             {user.website_url.replace(/^https?:\/\//, '')}
                         </a>
                     </div>
                 )}
 
+                <div className="profile-lists">
+                    <div className="profile-lists__header">
+                        <h3>Mes listes</h3>
+                        <button onClick={() => setShowNewListInput(p => !p)}>+ Créer une liste</button>
+                    </div>
+
+                    {showNewListInput && (
+                        <div className="profile-lists__create">
+                            <input
+                                type="text"
+                                placeholder="Nom de la liste…"
+                                value={newListName}
+                                onChange={(e) => setNewListName(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && handleCreateList()}
+                                autoFocus
+                            />
+                            <button onClick={handleCreateList}>Créer</button>
+                        </div>
+                    )}
+
+                    <div className="profile-lists__grid">
+                        {lists.map((list) => (
+                            <div key={list.id} className="list-item" onClick={() => navigate(`/lists/${list.id}`)}>
+                                <span className="list-item__name">{list.name}</span>
+                                {!list.is_default && (
+                                    <button
+                                        className="list-item__delete"
+                                        onClick={(e) => { e.stopPropagation(); handleDeleteList(list.id); }}
+                                    >✕</button>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
                 <div className="profile-info">
                     <div className="profile-info-item">
                         <span className="profile-info-label">{t.profile.member_since}</span>
                         <span className="profile-info-value">
                             {user?.created_at ? new Date(user.created_at).toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-US', {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric',
+                                year: 'numeric', month: 'long', day: 'numeric',
                             }) : '—'}
                         </span>
                     </div>
                 </div>
 
-                <button className="btn-logout" onClick={handleLogout}>
-                    {t.nav.logout}
-                </button>
+                <button className="btn-logout" onClick={handleLogout}>{t.nav.logout}</button>
             </div>
         </div>
     );

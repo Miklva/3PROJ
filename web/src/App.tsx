@@ -6,6 +6,7 @@ import Settings from './pages/Settings';
 import Register from './pages/Register';
 import Login from './pages/Login';
 import MediaDetail from './pages/MediaDetail';
+import ListDetail from './pages/ListDetail';
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -19,6 +20,7 @@ function App() {
                         <Route path="/login" element={<Login />} />
                         <Route path="/register" element={<Register />} />
                         <Route path="/media/:type/:id" element={<MediaDetail />} />
+                        <Route path="/lists/:id" element={<ProtectedRoute><ListDetail /></ProtectedRoute>} />
                         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                         <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
                     </Route>
