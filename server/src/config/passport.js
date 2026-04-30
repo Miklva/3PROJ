@@ -8,7 +8,6 @@ async function ensureUniqueUsername(baseUsername) {
     let isUnique = false;
     let suffix = 1;
 
-    // Nettoyer le nom d'utilisateur (pas d'espaces, etc.)
     username = username.replace(/\s+/g, '_').toLowerCase();
 
     while (!isUnique) {
@@ -33,12 +32,10 @@ passport.use(new GoogleStrategy({
       const email = profile.emails[0].value;
       const googleId = profile.id;
 
-      // Chercher l'utilisateur par google_id ou email
       let users = await query('SELECT * FROM users WHERE google_id = ? OR email = ?', [googleId, email]);
       
       if (users.length > 0) {
         const user = users[0];
-        // Si l'utilisateur existe par email mais n'a pas de google_id, on le lie
         if (!user.google_id) {
           await query('UPDATE users SET google_id = ? WHERE id = ?', [googleId, user.id]);
           user.google_id = googleId;
@@ -46,7 +43,6 @@ passport.use(new GoogleStrategy({
         return done(null, user);
       }
 
-      // Créer un nouvel utilisateur si n'existe pas
       const baseUsername = profile.displayName || profile.username || email.split('@')[0];
       const username = await ensureUniqueUsername(baseUsername);
       const avatar_url = profile.photos && profile.photos[0] ? profile.photos[0].value : null;
@@ -116,7 +112,6 @@ passport.use(new GitHubStrategy({
   }
 ));
 
-// Pas besoin de session avec JWT, mais passport en a besoin pour l'init
 passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((user, done) => done(null, user));
 

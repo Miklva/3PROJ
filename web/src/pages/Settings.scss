@@ -51,7 +51,7 @@
     }
 
     &.active {
-      color: #fff; // On garde blanc sur fond violet
+      color: #fff;
       background: c.$purple;
     }
   }
@@ -242,7 +242,6 @@
   }
 }
 
-/* Nouvelles sections pour les préférences et l'export */
 
 .theme-toggle-group {
   display: flex;

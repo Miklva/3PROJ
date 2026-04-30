@@ -1,0 +1,202 @@
+@use "../colors" as c;
+
+.search-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    transition: border-color 0.2s;
+
+    &:focus-within { border-color: c.$purple; }
+
+    &__loupe { height: 2rem; }
+
+    input {
+        flex: 1;
+        background: none;
+        border: none;
+        color: c.$white;
+        font-size: 1rem;
+        font-family: inherit;
+        &:focus { outline: none; }
+        &::placeholder { color: rgba(255, 255, 255, 0.3); }
+    }
+
+    &__clear {
+        background: none;
+        border: none;
+        color: rgba(255, 255, 255, 0.3);
+        cursor: pointer;
+        font-size: 0.85rem;
+        padding: 0;
+        &:hover { color: c.$white; }
+    }
+}
+
+.chips {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.chip {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.6);
+    padding: 0.35rem 0.9rem;
+    border-radius: 2rem;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-family: inherit;
+    transition: all 0.15s;
+
+    &:hover { border-color: c.$purple; color: c.$white; }
+
+    &--active {
+        background: rgba(124, 58, 237, 0.2);
+        border-color: c.$purple;
+        color: c.$white;
+        font-weight: 600;
+    }
+}
+
+.filters {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+
+    select {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 0.5rem;
+        color: c.$white;
+        padding: 0.4rem 0.75rem;
+        font-size: 0.85rem;
+        font-family: inherit;
+        cursor: pointer;
+        transition: border-color 0.2s;
+
+        &:focus { outline: none; border-color: c.$purple; }
+        option { background: #1a1a1a; }
+    }
+}
+
+.search-status {
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 0.9rem;
+    text-align: center;
+    padding: 3rem 0;
+}
+
+.media-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 1.25rem;
+}
+
+.user-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.user-card {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background 0.15s;
+
+    &:hover { background: rgba(255, 255, 255, 0.06); }
+
+    &__avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        overflow: hidden;
+        background: linear-gradient(135deg, c.$dark-purple, c.$purple);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1rem;
+        flex-shrink: 0;
+
+        img { width: 100%; height: 100%; object-fit: cover; }
+    }
+
+    &__name { font-size: 0.9rem; font-weight: 600; margin: 0; }
+}
+
+.list-results {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.list-result-card {
+    padding: 0.75rem 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background 0.15s;
+
+    &:hover { background: rgba(255, 255, 255, 0.06); }
+
+    &__name { font-size: 0.9rem; font-weight: 600; margin: 0 0 0.2rem; }
+    &__author { font-size: 0.78rem; color: rgba(255, 255, 255, 0.4); margin: 0; }
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 1rem 0 2rem;
+
+    button {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        color: c.$white;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 1.2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.15s;
+
+        &:hover:not(:disabled) {
+            background: rgba(124, 58, 237, 0.2);
+            border-color: c.$purple;
+        }
+
+        &:disabled { opacity: 0.3; cursor: default; }
+    }
+
+    span {
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.5);
+        min-width: 60px;
+        text-align: center;
+    }
+}

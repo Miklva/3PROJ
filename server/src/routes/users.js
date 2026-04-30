@@ -7,7 +7,6 @@ const bcrypt = require('bcryptjs');
 const { query } = require('../config/database');
 const authMiddleware = require('../middleware/auth');
 
-// Configuration de multer pour l'upload d'avatars
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         const uploadDir = 'uploads/avatars';
@@ -24,7 +23,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({
     storage: storage,
-    limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
+    limits: { fileSize: 10 * 1024 * 1024 },
     fileFilter: (req, file, cb) => {
         const filetypes = /jpeg|jpg|png|webp/;
         const mimetype = filetypes.test(file.mimetype);
@@ -34,7 +33,6 @@ const upload = multer({
     }
 });
 
-// GET /api/users/me — Profil de l'utilisateur connecté
 router.get('/me', authMiddleware, async (req, res) => {
     try {
         const users = await query(
@@ -48,7 +46,6 @@ router.get('/me', authMiddleware, async (req, res) => {
 
         const user = users[0];
 
-        // Récupérer les compteurs
         const followers = await query('SELECT COUNT(*) as count FROM subscriptions WHERE following_id = ?', [user.id]);
         const following = await query('SELECT COUNT(*) as count FROM subscriptions WHERE follower_id = ?', [user.id]);
 
@@ -63,7 +60,15 @@ router.get('/me', authMiddleware, async (req, res) => {
     }
 });
 
-// PUT /api/users/me — Mettre à jour le profil (bio, website, theme, language)
+router.get('/search', async (req, res) => {
+    const { q = '' } = req.query;
+    const results = await query(
+        'SELECT id, username, avatar_url FROM users WHERE username LIKE ? LIMIT 50',
+        [`%${q}%`]
+    );
+    res.json(results);
+});
+
 router.put('/me', authMiddleware, async (req, res) => {
     const { username, bio, website_url, theme, language } = req.body;
     try {
@@ -80,11 +85,9 @@ router.put('/me', authMiddleware, async (req, res) => {
             return res.status(400).json({ message: 'Aucune donnée à mettre à jour' });
         }
 
-        // Gestion du changement de mot de passe
         if (req.body.currentPassword && req.body.newPassword) {
             const { currentPassword, newPassword } = req.body;
             
-            // Récupérer le mot de passe actuel
             const userResults = await query('SELECT password FROM users WHERE id = ?', [req.user.id]);
             const user = userResults[0];
 
@@ -116,7 +119,6 @@ router.put('/me', authMiddleware, async (req, res) => {
     }
 });
 
-// POST /api/users/me/avatar — Uploader un avatar
 router.post('/me/avatar', authMiddleware, (req, res) => {
     upload.single('avatar')(req, res, async (err) => {
         if (err) {
@@ -139,7 +141,6 @@ router.post('/me/avatar', authMiddleware, (req, res) => {
     });
 });
 
-// POST /api/users/:id/follow — Suivre un utilisateur
 router.post('/:id/follow', authMiddleware, async (req, res) => {
     const targetId = req.params.id;
     if (targetId == req.user.id) {
@@ -158,7 +159,6 @@ router.post('/:id/follow', authMiddleware, async (req, res) => {
     }
 });
 
-// DELETE /api/users/:id/follow — Ne plus suivre
 router.delete('/:id/follow', authMiddleware, async (req, res) => {
     const targetId = req.params.id;
     try {
@@ -173,12 +173,10 @@ router.delete('/:id/follow', authMiddleware, async (req, res) => {
     }
 });
 
-// DELETE /api/users/me — Supprimer son propre compte
 router.delete('/me', authMiddleware, async (req, res) => {
     try {
         const userId = req.user.id;
         
-        // Supprimer l'utilisateur (les souscriptions seront supprimées par ON DELETE CASCADE)
         await query('DELETE FROM users WHERE id = ?', [userId]);
         
         res.json({ message: 'Compte supprimé avec succès' });
@@ -188,7 +186,6 @@ router.delete('/me', authMiddleware, async (req, res) => {
     }
 });
 
-// GET /api/users/me/export — Exporter les données personnelles (JSON)
 router.get('/me/export', authMiddleware, async (req, res) => {
     try {
         const users = await query(
@@ -202,7 +199,6 @@ router.get('/me/export', authMiddleware, async (req, res) => {
 
         const user = users[0];
 
-        // Récupérer les abonnements et abonnés
         const followers = await query('SELECT u.username, u.email FROM subscriptions s JOIN users u ON s.follower_id = u.id WHERE s.following_id = ?', [user.id]);
         const following = await query('SELECT u.username, u.email FROM subscriptions s JOIN users u ON s.following_id = u.id WHERE s.follower_id = ?', [user.id]);
 

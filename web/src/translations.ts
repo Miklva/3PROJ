@@ -4,6 +4,7 @@ export const translations = {
     fr: {
         nav: {
             home: 'Accueil',
+            search: 'Recherche',
             profile: 'Profil',
             settings: 'Paramètres',
             logout: 'Déconnexion'
@@ -99,9 +100,12 @@ export const translations = {
             link_register: 'S\'inscrire'
         }
     },
+
+    //TODO Penser a traduire tout le site web a la fin
     en: {
         nav: {
             home: 'Home',
+            search: 'Search',
             profile: 'Profile',
             settings: 'Settings',
             logout: 'Logout'
@@ -201,6 +205,7 @@ export const translations = {
         nav: {
             home: 'Inicio',
             profile: 'Perfil',
+            search: 'Nachos',
             settings: 'Ajustes',
             logout: 'Cerrar sesión'
         },

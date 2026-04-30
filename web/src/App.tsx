@@ -9,6 +9,7 @@ import MediaDetail from './pages/MediaDetail';
 import ListDetail from './pages/ListDetail';
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
+import Search from './pages/Search';
 
 function App() {
     return (
@@ -20,6 +21,7 @@ function App() {
                         <Route path="/login" element={<Login />} />
                         <Route path="/register" element={<Register />} />
                         <Route path="/media/:type/:id" element={<MediaDetail />} />
+                        <Route path="/search" element={<Search />} />
                         <Route path="/lists/:id" element={<ProtectedRoute><ListDetail /></ProtectedRoute>} />
                         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                         <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />

@@ -48,12 +48,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setLoading(false);
     }, []);
 
-    // Gérer l'application du thème
     useEffect(() => {
         if (user?.theme) {
             document.documentElement.setAttribute('data-theme', user.theme);
         } else {
-            document.documentElement.setAttribute('data-theme', 'dark'); // Par défaut
+            document.documentElement.setAttribute('data-theme', 'dark');
         }
     }, [user?.theme]);
 

@@ -27,6 +27,17 @@ router.get('/me', authMiddleware, async (req, res) => {
     }
 });
 
+router.get('/search', async (req, res) => {
+    const { q } = req.query;
+    const results = await query(
+        `SELECT l.id, l.name, u.username FROM lists l
+         JOIN users u ON l.user_id = u.id
+         WHERE l.name LIKE ? AND l.is_default = FALSE LIMIT 20`,
+        [`%${q}%`]
+    );
+    res.json(results);
+});
+
 router.post('/', authMiddleware, async (req, res) => {
     const { name } = req.body;
     if (!name?.trim()) return res.status(400).json({ error: 'Nom requis.' });

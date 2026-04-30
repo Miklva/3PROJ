@@ -127,10 +127,8 @@ router.post('/login', loginValidation, async (req, res) => {
     }
 });
 
-// --- OAuth Routes ---
 const passport = require('passport');
 
-// Google
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 router.get('/google/callback', 
@@ -152,7 +150,6 @@ router.get('/google/callback',
   }
 );
 
-// GitHub
 router.get('/github', passport.authenticate('github', { scope: ['user:email'] }));
 
 router.get('/github/callback', 

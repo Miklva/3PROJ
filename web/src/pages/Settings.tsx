@@ -22,7 +22,6 @@ export default function Settings() {
     const [avatarLoading, setAvatarLoading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    // Synchroniser l'état local avec l'utilisateur du contexte (utile après un fetch ou update)
     useEffect(() => {
         if (user) {
             setUsername(user.username || '');
@@ -62,7 +61,7 @@ export default function Settings() {
                     const parsed = JSON.parse(saved);
                     const updatedUser = { ...parsed, username, bio, website_url: websiteUrl };
                     localStorage.setItem('user', JSON.stringify(updatedUser));
-                    externalLogin(token() || '', updatedUser); // Triggger refresh if needed
+                    externalLogin(token() || '', updatedUser);
                 }
                 showMessage('success', t.settings.messages.success_profile);
             } else {

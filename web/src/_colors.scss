@@ -1,5 +1,4 @@
 :root {
-  // Mode Sombre (Par défaut)
   --color-bg-rgb: 15, 15, 15;
   --color-bg: #0f0f0f;
   --color-bg-alt: #1a1a1a;
@@ -37,12 +36,10 @@
   --color-border: rgba(15, 15, 15, 0.1);
   --color-border-hover: rgba(15, 15, 15, 0.2);
   
-  // Dans le thème clair, on garde le violet pour les boutons mais un peu plus saturé
   --color-purple: #6d28d9;
   --color-purple-rgb: 109, 40, 217;
 }
 
-// SCSS Variables for use in components (aliases)
 $bg: var(--color-bg);
 $bg-alt: var(--color-bg-alt);
 $bg-gradient: var(--color-bg-gradient);
@@ -58,7 +55,7 @@ $purple: var(--color-purple);
 $purple-rgb: var(--color-purple-rgb);
 $purple-hover: var(--color-purple-hover);
 $dark-purple: var(--color-purple-hover);
-$light-purple: #a78bfa; // Backup value
+$light-purple: #a78bfa;
 $red: var(--color-red);
 $light-red: var(--color-light-red);
 $green: var(--color-green);
@@ -74,7 +71,6 @@ $light-blue: #eff6ff;
 
 $dark-green: #15803d;
 
-// Old aliases for legacy if needed, but better to migrate
 $white: var(--color-text);
 $white-rgb: var(--color-text-rgb);
 $black: var(--color-bg);

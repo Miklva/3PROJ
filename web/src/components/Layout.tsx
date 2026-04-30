@@ -24,6 +24,7 @@ export default function Layout() {
                     <Link to="/">{t.nav.home}</Link>
                     {user ? (
                         <>
+                            <Link to="/search">{t.nav.search}</Link>
                             <Link to="/profile">{t.nav.profile}</Link>
                             <Link to="/settings">{t.nav.settings}</Link>
                             <button className="btn-nav-logout" onClick={handleLogout}>
