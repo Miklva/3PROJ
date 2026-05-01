@@ -69,6 +69,20 @@ router.get('/search', async (req, res) => {
     res.json(results);
 });
 
+router.get('/:id', async (req, res) => {
+    try {
+        const users = await query(
+            'SELECT id, username, bio, avatar_url, website_url, created_at FROM users WHERE id = ?',
+            [req.params.id]
+        );
+        if (users.length === 0) return res.status(404).json({ error: 'Utilisateur introuvable.' });
+        res.json(users[0]);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Erreur serveur.' });
+    }
+});
+
 router.put('/me', authMiddleware, async (req, res) => {
     const { username, bio, website_url, theme, language } = req.body;
     try {

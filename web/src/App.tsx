@@ -10,6 +10,8 @@ import ListDetail from './pages/ListDetail';
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import Search from './pages/Search';
+import PublicProfile from './pages/PublicProfile';
+
 
 function App() {
     return (
@@ -22,6 +24,7 @@ function App() {
                         <Route path="/register" element={<Register />} />
                         <Route path="/media/:type/:id" element={<MediaDetail />} />
                         <Route path="/search" element={<Search />} />
+                        <Route path="/profile/:id" element={<PublicProfile />} />
                         <Route path="/lists/:id" element={<ProtectedRoute><ListDetail /></ProtectedRoute>} />
                         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                         <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />

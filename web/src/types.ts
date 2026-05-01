@@ -1,6 +1,6 @@
 export type Media = {
   id: number;
-  media_type: 'movie' | 'tv';
+  media_type: "movie" | "tv";
   poster_path: string | null;
   title?: string;
   name?: string;
@@ -22,11 +22,12 @@ export type CrewMember = {
   id: number;
   name: string;
   job: string;
+  profile_path: string | null;
 };
 
 export type MediaDetail = {
   id: number;
-  media_type: 'movie' | 'tv';
+  media_type: "movie" | "tv";
   title?: string;
   name?: string;
   tagline?: string;
@@ -44,6 +45,11 @@ export type MediaDetail = {
   number_of_seasons?: number;
   number_of_episodes?: number;
   episode_run_time?: number[];
+  created_by?: {
+    id: number;
+    name: string;
+    profile_path: string | null;
+  }[];
   credits: {
     cast: CastMember[];
     crew: CrewMember[];
