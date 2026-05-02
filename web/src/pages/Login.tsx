@@ -22,9 +22,7 @@ export default function Login() {
         e.preventDefault();
         setError('');
         setLoading(true);
-
         const res = await login(email, password);
-
         if (res.success) {
             navigate(from, { replace: true });
         } else {
@@ -52,26 +50,14 @@ export default function Login() {
                 <form onSubmit={handleSubmit} className="login-form">
                     <div className="form-group">
                         <label htmlFor="email">{t.auth.email}</label>
-                        <input
-                            id="email"
-                            type="email"
-                            placeholder="exemple@mail.com"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                        />
+                        <input id="email" type="email" placeholder="exemple@mail.com"
+                            value={email} onChange={(e) => setEmail(e.target.value)} required />
                     </div>
 
                     <div className="form-group">
                         <label htmlFor="password">{t.auth.password}</label>
-                        <input
-                            id="password"
-                            type="password"
-                            placeholder="••••••••"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                        />
+                        <input id="password" type="password" placeholder="••••••••"
+                            value={password} onChange={(e) => setPassword(e.target.value)} required />
                     </div>
 
                     <Button type="submit" disabled={loading}>
@@ -79,17 +65,15 @@ export default function Login() {
                     </Button>
                 </form>
 
-                <div className="login-divider">
-                    <span>{t.auth.or}</span>
-                </div>
+                <div className="login-divider"><span>{t.auth.or}</span></div>
 
                 <div className="social-login">
-                    <button className="btn-social google" onClick={() => handleOAuth('google')}>
-                        <i>G</i> {t.auth.google}
-                    </button>
-                    <button className="btn-social github" onClick={() => handleOAuth('github')}>
-                        <i>G</i> {t.auth.github}
-                    </button>
+                    <Button variant="social" leftIcon={<i>G</i>} onClick={() => handleOAuth('google')}>
+                        {t.auth.google}
+                    </Button>
+                    <Button variant="social" leftIcon={<i>G</i>} onClick={() => handleOAuth('github')}>
+                        {t.auth.github}
+                    </Button>
                 </div>
 
                 <p className="login-register-link">

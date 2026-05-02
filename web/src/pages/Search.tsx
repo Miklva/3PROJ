@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import MediaCard from "../components/MediaCard";
+import Button from "../components/Button";
 import loupe from "../assets/loupe.png";
 import type { Media } from "../types";
 import "./Search.scss";
@@ -35,24 +36,7 @@ const years = Array.from(
   (_, i) => currentYear - i,
 );
 
-function TypeChip({
-  label,
-  active,
-  onClick,
-}: {
-  label: string;
-  active: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      className={`chip ${active ? "chip--active" : ""}`}
-      onClick={onClick}
-    >
-      {label}
-    </button>
-  );
-}
+
 
 export default function Search() {
   const [query, setQuery] = useState("");
@@ -254,43 +238,17 @@ export default function Search() {
           autoFocus
         />
         {query && (
-          <button className="search-bar__clear" onClick={() => setQuery("")}>
-            ✕
-          </button>
+          <Button variant="icon" onClick={() => setQuery("")}>✕</Button>
         )}
       </div>
 
       <div className="chips">
-        <TypeChip
-          label="Films"
-          active={type === "movie"}
-          onClick={() => setType("movie")}
-        />
-        <TypeChip
-          label="Séries"
-          active={type === "tv"}
-          onClick={() => setType("tv")}
-        />
-        <TypeChip
-          label="Acteur"
-          active={type === "person"}
-          onClick={() => setType("person")}
-        />
-        <TypeChip
-          label="Réalisateur"
-          active={type === "director"}
-          onClick={() => setType("director")}
-        />
-        <TypeChip
-          label="Utilisateurs"
-          active={type === "users"}
-          onClick={() => setType("users")}
-        />
-        <TypeChip
-          label="Listes"
-          active={type === "lists"}
-          onClick={() => setType("lists")}
-        />
+        <Button variant="chip" active={type === "movie"} onClick={() => setType("movie")}>Films</Button>
+        <Button variant="chip" active={type === "tv"} onClick={() => setType("tv")}>Séries</Button>
+        <Button variant="chip" active={type === "person"} onClick={() => setType("person")}>Acteur</Button>
+        <Button variant="chip" active={type === "director"} onClick={() => setType("director")}>Réalisateur</Button>
+        <Button variant="chip" active={type === "users"} onClick={() => setType("users")}>Utilisateurs</Button>
+        <Button variant="chip" active={type === "lists"} onClick={() => setType("lists")}>Listes</Button>
       </div>
 
       {(isMediaType || isPerson) && (
@@ -394,21 +352,11 @@ export default function Search() {
 
       {showPagination && !loading && (
         <div className="pagination">
-          <button
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
-            disabled={page === 1}
-          >
-            ‹
-          </button>
+          <Button variant="icon" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>‹</Button>
           <span>
             {page} / {totalPages}
           </span>
-          <button
-            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-            disabled={page === totalPages}
-          >
-            ›
-          </button>
+          <Button variant="icon" onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages}>›</Button>
         </div>
       )}
     </div>

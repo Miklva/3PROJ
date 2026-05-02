@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Button from '../components/Button';
 import './Profile.scss';
 
 type PublicUser = {
@@ -32,7 +33,7 @@ export default function PublicProfile() {
     return (
         <div className="profile-page">
             <div className="profile-card">
-                <button className="btn-logout" style={{ alignSelf: 'flex-start', marginBottom: '1rem' }} onClick={() => navigate(-1)}>← Retour</button>
+                <Button variant="back" onClick={() => navigate(-1)}>← Retour</Button>
 
                 <div className="profile-header">
                     <div className="avatar-container" style={{ cursor: 'default' }}>

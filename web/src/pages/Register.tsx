@@ -6,9 +6,7 @@ import { useTranslation } from '../hooks/useTranslation';
 import Button from "../components/Button";
 import './Register.scss';
 
-interface ServerError {
-    msg: string;
-}
+interface ServerError { msg: string; }
 
 export default function Register() {
     const navigate = useNavigate();
@@ -24,9 +22,7 @@ export default function Register() {
         e.preventDefault();
         setErrors([]);
         setLoading(true);
-
         const res = await register(username, email, password);
-
         if (res.success) {
             navigate('/');
         } else {
@@ -47,69 +43,43 @@ export default function Register() {
 
                 {errors.length > 0 && (
                     <div className="register-errors">
-                        {errors.map((err, i) => (
-                            <p key={i}>{err.msg}</p>
-                        ))}
+                        {errors.map((err, i) => <p key={i}>{err.msg}</p>)}
                     </div>
                 )}
 
                 <form onSubmit={handleSubmit} className="register-form">
                     <div className="form-group">
                         <label htmlFor="username">{t.auth.username}</label>
-                        <input
-                            id="username"
-                            type="text"
-                            placeholder="ton_pseudo"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            required
-                        />
+                        <input id="username" type="text" placeholder="ton_pseudo"
+                            value={username} onChange={(e) => setUsername(e.target.value)} required />
                     </div>
 
                     <div className="form-group">
                         <label htmlFor="email">{t.auth.email}</label>
-                        <input
-                            id="email"
-                            type="email"
-                            placeholder="exemple@mail.com"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                        />
+                        <input id="email" type="email" placeholder="exemple@mail.com"
+                            value={email} onChange={(e) => setEmail(e.target.value)} required />
                     </div>
 
                     <div className="form-group">
                         <label htmlFor="password">{t.auth.password}</label>
-                        <input
-                            id="password"
-                            type="password"
-                            placeholder={t.auth.password}
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                            minLength={6}
-                        />
+                        <input id="password" type="password" placeholder={t.auth.password}
+                            value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
                     </div>
-                    
-                    <Button
-                        type="submit"
-                        disabled={loading}
-                    >
+
+                    <Button type="submit" disabled={loading}>
                         {loading ? t.auth.btn_loading : t.auth.btn_register}
                     </Button>
                 </form>
 
-                <div className="register-divider">
-                    <span>{t.auth.or}</span>
-                </div>
+                <div className="register-divider"><span>{t.auth.or}</span></div>
 
                 <div className="social-login">
-                    <button className="btn-social google" onClick={() => handleOAuth('google')}>
-                        <i>G</i> {t.auth.google}
-                    </button>
-                    <button className="btn-social github" onClick={() => handleOAuth('github')}>
-                        <i>G</i> {t.auth.github}
-                    </button>
+                    <Button variant="social" leftIcon={<i>G</i>} onClick={() => handleOAuth('google')}>
+                        {t.auth.google}
+                    </Button>
+                    <Button variant="social" leftIcon={<i>G</i>} onClick={() => handleOAuth('github')}>
+                        {t.auth.github}
+                    </Button>
                 </div>
 
                 <p className="register-login-link">

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import MediaCard from "../components/MediaCard";
+import Button from "../components/Button";
 import "./ListDetail.scss";
 
 type ListItem = {
@@ -47,9 +48,9 @@ export default function ListDetail() {
 
   return (
     <div className="list-detail">
-      <button className="btn-back" onClick={() => navigate("/profile")}>
+      <Button variant="back" onClick={() => navigate("/profile")}>
         ← Retour
-      </button>
+      </Button>
 
       <h1>{list.name}</h1>
       <p className="list-count">

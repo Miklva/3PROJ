@@ -227,16 +227,17 @@ export default function Settings() {
 
                 <div className="settings-tabs">
                     {(['profile', 'preferences', 'security', 'data'] as Tab[]).map((tab) => (
-                        <button
+                        <Button
                             key={tab}
-                            className={`settings-tab ${activeTab === tab ? 'active' : ''}`}
+                            variant="tab"
+                            active={activeTab === tab}
                             onClick={() => setActiveTab(tab)}
                         >
                             {tab === 'profile' && t.settings.tabs.profile}
                             {tab === 'preferences' && t.settings.tabs.preferences}
                             {tab === 'security' && t.settings.tabs.security}
                             {tab === 'data' && t.settings.tabs.data}
-                        </button>
+                        </Button>
                     ))}
                 </div>
 
@@ -295,14 +296,13 @@ export default function Settings() {
                                     {user?.avatar_url && (
                                         <img src={user.avatar_url} alt="avatar actuel" className="current-avatar" />
                                     )}
-                                    <button
-                                        type="button"
-                                        className="btn-upload-avatar"
+                                    <Button
+                                        variant="ghost"
                                         onClick={() => fileInputRef.current?.click()}
                                         disabled={avatarLoading}
                                     >
                                         {avatarLoading ? t.settings.profile.uploading : `📸 ${t.settings.profile.change_avatar}`}
-                                    </button>
+                                    </Button>
                                     <input
                                         ref={fileInputRef}
                                         type="file"
@@ -324,20 +324,12 @@ export default function Settings() {
                             <div className="form-group">
                                 <label>{t.settings.preferences.theme}</label>
                                 <div className="theme-toggle-group">
-                                    <button
-                                        type="button"
-                                        className={`theme-btn ${theme === 'light' ? 'active' : ''}`}
-                                        onClick={() => setTheme('light')}
-                                    >
+                                    <Button variant="tab" active={theme === 'light'} onClick={() => setTheme('light')}>
                                         ☀️ {t.settings.preferences.theme_light}
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className={`theme-btn ${theme === 'dark' ? 'active' : ''}`}
-                                        onClick={() => setTheme('dark')}
-                                    >
+                                    </Button>
+                                    <Button variant="tab" active={theme === 'dark'} onClick={() => setTheme('dark')}>
                                         🌙 {t.settings.preferences.theme_dark}
-                                    </button>
+                                    </Button>
                                 </div>
                             </div>
 
@@ -426,21 +418,21 @@ export default function Settings() {
                                 <h3>{t.settings.account.data_subtitle}</h3>
                                 <p>{t.settings.account.data_desc}</p>
                                 <div className="export-actions">
-                                    <button className="btn-export" onClick={() => handleExport('json')}>
+                                    <Button variant="ghost" onClick={() => handleExport('json')}>
                                         📤 {t.settings.account.export_btn}
-                                    </button>
+                                    </Button>
                                 </div>
                             </div>
 
                             <div className="settings-section danger-zone">
                                 <h3>{t.settings.account.danger_title}</h3>
                                 <p>{t.settings.account.danger_desc}</p>
-                                <button className="btn-logout-settings" onClick={handleLogout}>
+                                <Button variant="danger" onClick={handleLogout}>
                                     {t.settings.account.logout}
-                                </button>
-                                <button className="btn-delete-account" onClick={handleDeleteAccount}>
+                                </Button>
+                                <Button variant="danger" onClick={handleDeleteAccount}>
                                     🗑️ {t.settings.account.delete_account}
-                                </button>
+                                </Button>
                             </div>
                         </div>
                     )}

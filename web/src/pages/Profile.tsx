@@ -3,6 +3,7 @@ import type { ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useTranslation } from '../hooks/useTranslation';
+import Button from '../components/Button';
 import './Profile.scss';
 
 interface User {
@@ -39,17 +40,12 @@ export default function Profile() {
 
     const token = localStorage.getItem('token');
 
-    useEffect(() => {
-        fetchUserData();
-        fetchLists();
-    }, []);
+    useEffect(() => { fetchUserData(); fetchLists(); }, []);
 
     const fetchUserData = async () => {
         if (!token) { navigate('/register'); return; }
         try {
-            const res = await fetch('/api/users/me', {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+            const res = await fetch('/api/users/me', { headers: { Authorization: `Bearer ${token}` } });
             if (!res.ok) {
                 if (res.status === 401) { localStorage.removeItem('token'); navigate('/register'); }
                 throw new Error(lang === 'fr' ? 'Erreur lors du chargement du profil' : 'Error loading profile');
@@ -69,15 +65,10 @@ export default function Profile() {
         try {
             const res = await axios.get('/api/lists/me', { headers: { Authorization: `Bearer ${token}` } });
             setLists(res.data);
-        } catch (err) {
-            console.error('Erreur chargement listes', err);
-        }
+        } catch (err) { console.error('Erreur chargement listes', err); }
     };
 
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        navigate('/register');
-    };
+    const handleLogout = () => { localStorage.removeItem('token'); navigate('/register'); };
 
     const handleUpdateBio = async () => {
         try {
@@ -86,16 +77,9 @@ export default function Profile() {
                 headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
                 body: JSON.stringify({ bio: newBio }),
             });
-            if (res.ok) {
-                setUser(user ? { ...user, bio: newBio } : null);
-                setIsEditingBio(false);
-            }
-        } catch (err) {
-            console.error('Erreur bio update', err);
-        }
+            if (res.ok) { setUser(user ? { ...user, bio: newBio } : null); setIsEditingBio(false); }
+        } catch (err) { console.error('Erreur bio update', err); }
     };
-
-    const handleAvatarClick = () => fileInputRef.current?.click();
 
     const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -113,11 +97,8 @@ export default function Profile() {
                 const data = await res.json();
                 setUser(user ? { ...user, avatar_url: data.avatar_url } : null);
             }
-        } catch (err) {
-            console.error('Erreur avatar upload', err);
-        } finally {
-            setIsUpdatingAvatar(false);
-        }
+        } catch (err) { console.error('Erreur avatar upload', err); }
+        finally { setIsUpdatingAvatar(false); }
     };
 
     const handleCreateList = async () => {
@@ -127,18 +108,14 @@ export default function Profile() {
             setLists(prev => [...prev, res.data]);
             setNewListName('');
             setShowNewListInput(false);
-        } catch (err) {
-            console.error('Erreur création liste', err);
-        }
+        } catch (err) { console.error('Erreur création liste', err); }
     };
 
     const handleDeleteList = async (listId: number) => {
         try {
             await axios.delete(`/api/lists/${listId}`, { headers: { Authorization: `Bearer ${token}` } });
             setLists(prev => prev.filter(l => l.id !== listId));
-        } catch (err) {
-            console.error('Erreur suppression liste', err);
-        }
+        } catch (err) { console.error('Erreur suppression liste', err); }
     };
 
     if (loading) return <div className="profile-page"><div className="profile-loading">{lang === 'fr' ? 'Chargement...' : 'Loading...'}</div></div>;
@@ -149,7 +126,7 @@ export default function Profile() {
             <div className="profile-card">
 
                 <div className="profile-header">
-                    <div className="avatar-container" onClick={handleAvatarClick}>
+                    <div className="avatar-container" onClick={() => fileInputRef.current?.click()}>
                         {user?.avatar_url ? (
                             <img src={user.avatar_url} alt="Avatar" className="profile-avatar-img" />
                         ) : (
@@ -179,11 +156,11 @@ export default function Profile() {
                     <div className="bio-header">
                         <h3>{t.settings.profile.bio}</h3>
                         {!isEditingBio ? (
-                            <button className="btn-edit-bio" onClick={() => setIsEditingBio(true)}>{t.profile.edit_bio}</button>
+                            <Button variant="ghost" onClick={() => setIsEditingBio(true)}>{t.profile.edit_bio}</Button>
                         ) : (
                             <div className="bio-actions">
-                                <button className="btn-save-bio" onClick={handleUpdateBio}>{t.profile.save_bio}</button>
-                                <button className="btn-cancel-bio" onClick={() => setIsEditingBio(false)}>{t.profile.cancel_bio}</button>
+                                <Button variant="ghost" onClick={handleUpdateBio}>{t.profile.save_bio}</Button>
+                                <Button variant="ghost" onClick={() => setIsEditingBio(false)}>{t.profile.cancel_bio}</Button>
                             </div>
                         )}
                     </div>
@@ -209,20 +186,17 @@ export default function Profile() {
                 <div className="profile-lists">
                     <div className="profile-lists__header">
                         <h3>Mes listes</h3>
-                        <button onClick={() => setShowNewListInput(p => !p)}>+ Créer une liste</button>
+                        <Button variant="ghost" onClick={() => setShowNewListInput(p => !p)}>+ Créer une liste</Button>
                     </div>
 
                     {showNewListInput && (
                         <div className="profile-lists__create">
                             <input
-                                type="text"
-                                placeholder="Nom de la liste…"
-                                value={newListName}
+                                type="text" placeholder="Nom de la liste…" value={newListName}
                                 onChange={(e) => setNewListName(e.target.value)}
-                                onKeyDown={(e) => e.key === 'Enter' && handleCreateList()}
-                                autoFocus
+                                onKeyDown={(e) => e.key === 'Enter' && handleCreateList()} autoFocus
                             />
-                            <button onClick={handleCreateList}>Créer</button>
+                            <Button variant="ghost" onClick={handleCreateList}>Créer</Button>
                         </div>
                     )}
 
@@ -231,10 +205,10 @@ export default function Profile() {
                             <div key={list.id} className="list-item" onClick={() => navigate(`/lists/${list.id}`)}>
                                 <span className="list-item__name">{list.name}</span>
                                 {!list.is_default && (
-                                    <button
-                                        className="list-item__delete"
+                                    <Button
+                                        variant="icon"
                                         onClick={(e) => { e.stopPropagation(); handleDeleteList(list.id); }}
-                                    >✕</button>
+                                    >✕</Button>
                                 )}
                             </div>
                         ))}
@@ -252,7 +226,7 @@ export default function Profile() {
                     </div>
                 </div>
 
-                <button className="btn-logout" onClick={handleLogout}>{t.nav.logout}</button>
+                <Button variant="danger" onClick={handleLogout}>{t.nav.logout}</Button>
             </div>
         </div>
     );

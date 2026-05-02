@@ -1,6 +1,7 @@
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { useTranslation } from "../hooks/useTranslation";
+import Button from "./Button";
 import "./Layout.scss";
 import logo from "../assets/logo.png";
 
@@ -27,9 +28,7 @@ export default function Layout() {
                             <Link to="/search">{t.nav.search}</Link>
                             <Link to="/profile">{t.nav.profile}</Link>
                             <Link to="/settings">{t.nav.settings}</Link>
-                            <button className="btn-nav-logout" onClick={handleLogout}>
-                                {t.nav.logout}
-                            </button>
+                            <Button variant="nav" onClick={handleLogout}>{t.nav.logout}</Button>
                         </>
                     ) : (
                         <>

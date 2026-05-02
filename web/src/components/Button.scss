@@ -1,60 +1,181 @@
 @use "../colors" as c;
 
-.button-wrapper {
+.btn-wrapper {
   display: flex;
   justify-content: center;
   width: 100%;
 }
 
-button[type="button"] {
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &__icon {
+    display: inline-flex;
+    font-style: normal;
+  }
+}
+
+.btn--primary {
   margin: 2rem 0;
   padding: 1rem 2rem;
   border-radius: 999px;
-  border: none;
-  font-size: 1rem;
-  cursor: pointer;
-
-  background: linear-gradient(
-    135deg,
-    c.$purple,
-    c.$light-purple
-  );
-
+  background: linear-gradient(135deg, c.$purple, c.$light-purple);
   color: c.$white;
-
-  transition: all 0.25s ease;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 
-  &:hover {
+  &:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 12px 25px rgba(0, 0, 0, 0.25);
     filter: brightness(1.1);
   }
 }
 
-button[type="submit"] {
+.btn--submit {
   width: 100%;
   padding: 0.7rem;
-
   background-color: c.$gray;
   color: c.$white;
-
-  font-size: 1rem;
   font-weight: 600;
-
-  border: none;
   border-radius: 5px;
-
-  cursor: pointer;
-
-  transition: opacity 0.2s ease;
+  justify-content: center;
 
   &:hover:not(:disabled) {
     opacity: 0.8;
   }
+}
 
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+.btn--ghost {
+  padding: 0.3rem 0.8rem;
+  border-radius: 6px;
+  background: transparent;
+  color: c.$purple;
+  border: 1px solid c.$purple;
+  font-size: 0.85rem;
+
+  &:hover:not(:disabled) {
+    background: c.$purple;
+    color: c.$white;
+  }
+}
+
+.btn--danger {
+  padding: 0.5rem 1.2rem;
+  border-radius: 8px;
+  background: transparent;
+  color: #e53e3e;
+  border: 1px solid #e53e3e;
+  font-size: 0.9rem;
+
+  &:hover:not(:disabled) {
+    background: #e53e3e;
+    color: c.$white;
+  }
+}
+
+.btn--back {
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.15);
+  color: c.$white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(4px);
+  font-size: 0.9rem;
+
+  &:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.25);
+  }
+}
+
+.btn--social {
+  width: 100%;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  color: c.$white;
+  font-size: 0.95rem;
+  justify-content: center;
+
+  &:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.15);
+  }
+}
+
+.btn--chip {
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  font-size: 0.85rem;
+
+  &:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.12);
+    color: c.$white;
+  }
+
+  &.btn--active {
+    background: c.$purple;
+    color: c.$white;
+    border-color: c.$purple;
+  }
+}
+
+.btn--tab {
+  padding: 0.5rem 1.2rem;
+  border-radius: 6px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
+  border: none;
+  font-size: 0.9rem;
+
+  &:hover:not(:disabled) {
+    color: c.$white;
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  &.btn--active {
+    color: c.$white;
+    background: rgba(255, 255, 255, 0.12);
+    font-weight: 600;
+  }
+}
+
+.btn--nav {
+  padding: 0;
+  margin-left: 1.5rem;
+  background: none;
+  border: none;
+  color: c.$text;
+  font-size: inherit;
+  font-family: inherit;
+
+  &:hover:not(:disabled) {
+    color: c.$red;
+  }
+}
+.btn--icon {
+  padding: 0.25rem 0.5rem;
+  border-radius: 50%;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.5);
+  border: none;
+  font-size: 0.9rem;
+  line-height: 1;
+
+  &:hover:not(:disabled) {
+    color: c.$white;
+    background: rgba(255, 255, 255, 0.1);
   }
 }
