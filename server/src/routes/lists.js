@@ -3,12 +3,11 @@ const router = express.Router();
 const { query } = require('../config/database');
 const authMiddleware = require('../middleware/auth');
 
-// ─── Listes par défaut ────────────────────────────────────────────────────────
 const DEFAULT_LISTS = [
-    { name: 'À voir',     icon: '📋' },
-    { name: 'En cours',   icon: '▶️' },
-    { name: 'Terminé',    icon: '✅' },
-    { name: 'Abandonné',  icon: '🚫' },
+    { name: 'À voir' },
+    { name: 'En cours' },
+    { name: 'Terminé' },
+    { name: 'Abandonné' },
 ];
 
 async function ensureDefaultLists(userId) {
@@ -28,7 +27,6 @@ async function ensureDefaultLists(userId) {
     }
 }
 
-// ─── GET /me — Mes listes (auth requise) ────────────────────────────────────
 router.get('/me', authMiddleware, async (req, res) => {
     try {
         await ensureDefaultLists(req.user.id);
@@ -49,12 +47,10 @@ router.get('/me', authMiddleware, async (req, res) => {
     }
 });
 
-// ─── GET /stats — Statistiques tableau de bord (auth requise) ──────────────
 router.get('/stats', authMiddleware, async (req, res) => {
     try {
         await ensureDefaultLists(req.user.id);
 
-        // Compte par liste par défaut
         const defaultStats = await query(
             `SELECT l.name, COUNT(li.id) AS count
              FROM lists l
@@ -64,13 +60,11 @@ router.get('/stats', authMiddleware, async (req, res) => {
             [req.user.id]
         );
 
-        // Nombre de listes personnalisées
         const [customCount] = await query(
             'SELECT COUNT(*) AS count FROM lists WHERE user_id = ? AND is_default = FALSE',
             [req.user.id]
         );
 
-        // Total d'œuvres uniques toutes listes confondues
         const [totalItems] = await query(
             `SELECT COUNT(DISTINCT CONCAT(li.tmdb_id, '-', li.media_type)) AS count
              FROM list_items li
@@ -79,7 +73,6 @@ router.get('/stats', authMiddleware, async (req, res) => {
             [req.user.id]
         );
 
-        // Répartition films vs séries dans "Terminé"
         const terminatedList = await query(
             'SELECT id FROM lists WHERE user_id = ? AND name = ? AND is_default = TRUE LIMIT 1',
             [req.user.id, 'Terminé']
@@ -94,7 +87,6 @@ router.get('/stats', authMiddleware, async (req, res) => {
             );
         }
 
-        // 5 derniers ajouts toutes listes
         const recentItems = await query(
             `SELECT li.title, li.poster_path, li.media_type, li.tmdb_id, li.added_at, l.name AS list_name
              FROM list_items li
@@ -118,7 +110,6 @@ router.get('/stats', authMiddleware, async (req, res) => {
     }
 });
 
-// ─── GET /search — Recherche parmi listes publiques ────────────────────────
 router.get('/search', async (req, res) => {
     const { q } = req.query;
     if (!q?.trim()) return res.json([]);
@@ -141,7 +132,6 @@ router.get('/search', async (req, res) => {
     }
 });
 
-// ─── POST / — Créer une liste personnalisée ─────────────────────────────────
 router.post('/', authMiddleware, async (req, res) => {
     const { name, description, is_public } = req.body;
     if (!name?.trim()) return res.status(400).json({ error: 'Nom requis.' });
@@ -165,8 +155,6 @@ router.post('/', authMiddleware, async (req, res) => {
     }
 });
 
-// ─── GET /:id — Détail d'une liste ──────────────────────────────────────────
-// Accessible sans auth si la liste est publique
 router.get('/:id', async (req, res) => {
     try {
         const lists = await query(
@@ -177,7 +165,6 @@ router.get('/:id', async (req, res) => {
 
         const list = lists[0];
 
-        // Vérifier les droits d'accès
         const token = req.headers.authorization?.split(' ')[1];
         let currentUserId = null;
         if (token) {
@@ -205,7 +192,6 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// ─── PUT /:id — Modifier une liste personnalisée ────────────────────────────
 router.put('/:id', authMiddleware, async (req, res) => {
     const { name, description, is_public } = req.body;
 
@@ -236,7 +222,6 @@ router.put('/:id', authMiddleware, async (req, res) => {
     }
 });
 
-// ─── POST /:id/items — Ajouter un item ─────────────────────────────────────
 router.post('/:id/items', authMiddleware, async (req, res) => {
     const { tmdb_id, media_type, title, poster_path } = req.body;
 
@@ -251,14 +236,13 @@ router.post('/:id/items', authMiddleware, async (req, res) => {
             [req.params.id, tmdb_id, media_type, title, poster_path ?? null]
         );
 
-        res.json({ message: 'Œuvre ajoutée.' });
+        res.json({ message: 'Oeuvre ajoutée.' });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Erreur serveur.' });
     }
 });
 
-// ─── DELETE /:id/items/:tmdb_id — Retirer un item ──────────────────────────
 router.delete('/:id/items/:tmdb_id', authMiddleware, async (req, res) => {
     try {
         const lists = await query('SELECT id FROM lists WHERE id = ? AND user_id = ?', [req.params.id, req.user.id]);
@@ -268,14 +252,13 @@ router.delete('/:id/items/:tmdb_id', authMiddleware, async (req, res) => {
             'DELETE FROM list_items WHERE list_id = ? AND tmdb_id = ?',
             [req.params.id, req.params.tmdb_id]
         );
-        res.json({ message: 'Œuvre retirée.' });
+        res.json({ message: 'Oeuvre retirée.' });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Erreur serveur.' });
     }
 });
 
-// ─── DELETE /:id — Supprimer une liste personnalisée ───────────────────────
 router.delete('/:id', authMiddleware, async (req, res) => {
     try {
         const lists = await query(

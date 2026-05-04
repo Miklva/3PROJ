@@ -95,9 +95,7 @@ export default function ListDetail() {
 
   return (
     <div className="list-detail">
-      <Button variant="back" onClick={() => navigate("/profile")}>
-        ← Retour
-      </Button>
+      <Button variant="back" onClick={() => navigate("/profile")}>Retour</Button>
 
       <div className="list-detail__header">
         {isEditing ? (
@@ -176,7 +174,7 @@ export default function ListDetail() {
                   onClick={() => handleRemoveItem(item.tmdb_id)}
                   title="Retirer de la liste"
                 >
-                  ✕
+                   x
                 </button>
               )}
             </div>
