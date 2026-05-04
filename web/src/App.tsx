@@ -13,6 +13,7 @@ import Search from './pages/Search';
 import PublicProfile from './pages/PublicProfile';
 import Admin from './pages/Admin';
 import OAuthCallback from './pages/OAuthCallback';
+import Dashboard from './pages/Dashboard';
 
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
                         <Route path="/lists/:id" element={<ProtectedRoute><ListDetail /></ProtectedRoute>} />
                         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                         <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+                        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                         <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
                         <Route path="/oauth-callback" element={<OAuthCallback />} />
                     </Route>

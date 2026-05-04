@@ -20,7 +20,21 @@ interface User {
     created_at: string;
 }
 
-type List = { id: number; name: string; is_default: boolean };
+type List = {
+    id: number;
+    name: string;
+    description: string | null;
+    is_default: boolean;
+    is_public: boolean;
+    item_count: number;
+};
+
+const DEFAULT_LIST_META: Record<string, { color: string }> = {
+    'À voir':    { color: '#7c3aed' },
+    'En cours':  { color: '#2563eb' },
+    'Terminé':   { color: '#22c55e' },
+    'Abandonné': { color: '#9ca3af' },
+};
 
 export default function Profile() {
     const navigate = useNavigate();
@@ -36,7 +50,15 @@ export default function Profile() {
 
     const [lists, setLists] = useState<List[]>([]);
     const [newListName, setNewListName] = useState('');
+    const [newListDesc, setNewListDesc] = useState('');
+    const [newListPublic, setNewListPublic] = useState(false);
     const [showNewListInput, setShowNewListInput] = useState(false);
+
+    // Edition liste personnalisée
+    const [editingListId, setEditingListId] = useState<number | null>(null);
+    const [editName, setEditName] = useState('');
+    const [editDesc, setEditDesc] = useState('');
+    const [editPublic, setEditPublic] = useState(false);
 
     const token = localStorage.getItem('token');
 
@@ -104,9 +126,15 @@ export default function Profile() {
     const handleCreateList = async () => {
         if (!newListName.trim()) return;
         try {
-            const res = await axios.post('/api/lists', { name: newListName }, { headers: { Authorization: `Bearer ${token}` } });
+            const res = await axios.post(
+                '/api/lists',
+                { name: newListName, description: newListDesc, is_public: newListPublic },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
             setLists(prev => [...prev, res.data]);
             setNewListName('');
+            setNewListDesc('');
+            setNewListPublic(false);
             setShowNewListInput(false);
         } catch (err) { console.error('Erreur création liste', err); }
     };
@@ -117,6 +145,32 @@ export default function Profile() {
             setLists(prev => prev.filter(l => l.id !== listId));
         } catch (err) { console.error('Erreur suppression liste', err); }
     };
+
+    const startEditing = (list: List) => {
+        setEditingListId(list.id);
+        setEditName(list.name);
+        setEditDesc(list.description || '');
+        setEditPublic(list.is_public);
+    };
+
+    const handleSaveEdit = async (listId: number) => {
+        try {
+            await axios.put(
+                `/api/lists/${listId}`,
+                { name: editName, description: editDesc, is_public: editPublic },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            setLists(prev => prev.map(l =>
+                l.id === listId
+                    ? { ...l, name: editName, description: editDesc || null, is_public: editPublic }
+                    : l
+            ));
+            setEditingListId(null);
+        } catch (err) { console.error('Erreur mise à jour liste', err); }
+    };
+
+    const defaultLists = lists.filter(l => l.is_default);
+    const customLists  = lists.filter(l => !l.is_default);
 
     if (loading) return <div className="profile-page"><div className="profile-loading">{lang === 'fr' ? 'Chargement...' : 'Loading...'}</div></div>;
     if (error) return <div className="profile-page"><div className="profile-error">{error}</div></div>;
@@ -134,7 +188,7 @@ export default function Profile() {
                                 {user?.username.charAt(0).toUpperCase()}
                             </div>
                         )}
-                        <div className="avatar-overlay">{isUpdatingAvatar ? '...' : '📸'}</div>
+                        <div className="avatar-overlay">{isUpdatingAvatar ? '...' : 'Changer'}</div>
                         <input type="file" ref={fileInputRef} onChange={handleFileChange} style={{ display: 'none' }} accept="image/*" />
                     </div>
                     <h2 className="profile-username">{user?.username}</h2>
@@ -149,6 +203,12 @@ export default function Profile() {
                     <div className="stat-item">
                         <span className="stat-count">{user?.following_count}</span>
                         <span className="stat-label">{t.profile.following}</span>
+                    </div>
+                    <div className="stat-item stat-item--clickable" onClick={() => navigate('/dashboard')}>
+                        <span className="stat-count">
+                            {lists.reduce((acc, l) => acc + (l.item_count || 0), 0)}
+                        </span>
+                        <span className="stat-label">Œuvres</span>
                     </div>
                 </div>
 
@@ -173,7 +233,6 @@ export default function Profile() {
 
                 {user?.website_url && (
                     <div className="profile-website-section">
-                        <span className="website-icon">🔗</span>
                         <a
                             href={user.website_url.startsWith('http') ? user.website_url : `https://${user.website_url}`}
                             target="_blank" rel="noopener noreferrer" className="website-link"
@@ -183,10 +242,35 @@ export default function Profile() {
                     </div>
                 )}
 
+                {/* ── Listes par défaut ── */}
                 <div className="profile-lists">
                     <div className="profile-lists__header">
-                        <h3>Mes listes</h3>
-                        <Button variant="ghost" onClick={() => setShowNewListInput(p => !p)}>+ Créer une liste</Button>
+                        <h3>Listes de suivi</h3>
+                        <Button variant="ghost" onClick={() => navigate('/dashboard')}>Tableau de bord</Button>
+                    </div>
+                    <div className="profile-lists__default-grid">
+                        {defaultLists.map((list) => {
+                            const meta = DEFAULT_LIST_META[list.name] || { color: '#7c3aed' };
+                            return (
+                                <div
+                                    key={list.id}
+                                    className="default-list-card"
+                                    style={{ '--list-color': meta.color } as React.CSSProperties}
+                                    onClick={() => navigate(`/lists/${list.id}`)}
+                                >
+                                    <span className="default-list-card__name">{list.name}</span>
+                                    <span className="default-list-card__count">{list.item_count}</span>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+
+                {/* ── Listes personnalisées ── */}
+                <div className="profile-lists">
+                    <div className="profile-lists__header">
+                        <h3>Mes listes personnalisées</h3>
+                        <Button variant="ghost" onClick={() => setShowNewListInput(p => !p)}>+ Créer</Button>
                     </div>
 
                     {showNewListInput && (
@@ -196,19 +280,62 @@ export default function Profile() {
                                 onChange={(e) => setNewListName(e.target.value)}
                                 onKeyDown={(e) => e.key === 'Enter' && handleCreateList()} autoFocus
                             />
+                            <input
+                                type="text" placeholder="Description (optionnel)…" value={newListDesc}
+                                onChange={(e) => setNewListDesc(e.target.value)}
+                            />
+                            <label className="toggle-row">
+                                <input type="checkbox" checked={newListPublic} onChange={e => setNewListPublic(e.target.checked)} />
+                                <span>Rendre publique</span>
+                            </label>
                             <Button variant="ghost" onClick={handleCreateList}>Créer</Button>
                         </div>
                     )}
 
                     <div className="profile-lists__grid">
-                        {lists.map((list) => (
-                            <div key={list.id} className="list-item" onClick={() => navigate(`/lists/${list.id}`)}>
-                                <span className="list-item__name">{list.name}</span>
-                                {!list.is_default && (
-                                    <Button
-                                        variant="icon"
-                                        onClick={(e) => { e.stopPropagation(); handleDeleteList(list.id); }}
-                                    >✕</Button>
+                        {customLists.length === 0 && (
+                            <p className="profile-lists__empty">Aucune liste personnalisée pour l'instant.</p>
+                        )}
+                        {customLists.map((list) => (
+                            <div key={list.id} className="list-item">
+                                {editingListId === list.id ? (
+                                    <div className="list-item__edit">
+                                        <input
+                                            value={editName} onChange={e => setEditName(e.target.value)}
+                                            placeholder="Nom…"
+                                        />
+                                        <input
+                                            value={editDesc} onChange={e => setEditDesc(e.target.value)}
+                                            placeholder="Description…"
+                                        />
+                                        <label className="toggle-row">
+                                            <input type="checkbox" checked={editPublic} onChange={e => setEditPublic(e.target.checked)} />
+                                            <span>Publique</span>
+                                        </label>
+                                        <div className="list-item__edit-actions">
+                                            <Button variant="ghost" onClick={() => handleSaveEdit(list.id)}>Sauver</Button>
+                                            <Button variant="ghost" onClick={() => setEditingListId(null)}>Annuler</Button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <div className="list-item__info" onClick={() => navigate(`/lists/${list.id}`)}>
+                                            <div className="list-item__title-row">
+                                                <span className="list-item__name">{list.name}</span>
+                                                <span className={`list-item__badge ${list.is_public ? 'badge--public' : 'badge--private'}`}>
+                                                    {list.is_public ? 'Public' : 'Privé'}
+                                                </span>
+                                            </div>
+                                            {list.description && (
+                                                <span className="list-item__desc">{list.description}</span>
+                                            )}
+                                            <span className="list-item__count">{list.item_count} œuvre{list.item_count !== 1 ? 's' : ''}</span>
+                                        </div>
+                                        <div className="list-item__actions">
+                                            <Button variant="icon" onClick={(e) => { e.stopPropagation(); startEditing(list); }}>Modifier</Button>
+                                            <Button variant="icon" onClick={(e) => { e.stopPropagation(); handleDeleteList(list.id); }}>Supprimer</Button>
+                                        </div>
+                                    </>
                                 )}
                             </div>
                         ))}
