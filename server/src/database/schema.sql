@@ -13,6 +13,8 @@ CREATE TABLE IF NOT EXISTS users (
     avatar_url VARCHAR(500) DEFAULT NULL,
     theme VARCHAR(20) DEFAULT 'light',
     language VARCHAR(10) DEFAULT 'fr',
+    role ENUM('user', 'admin') DEFAULT 'user',
+    is_banned BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -33,9 +35,21 @@ CREATE TABLE IF NOT EXISTS reviews (
     media_type  ENUM('movie', 'tv') NOT NULL,
     rating      TINYINT CHECK (rating BETWEEN 1 AND 5),
     comment     TEXT,
+    is_featured BOOLEAN DEFAULT FALSE,
     created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE KEY unique_review (user_id, tmdb_id, media_type),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS reports (
+    id          INT AUTO_INCREMENT PRIMARY KEY,
+    review_id   INT NOT NULL,
+    reporter_id INT NOT NULL,
+    reason      ENUM('spoiler', 'insult', 'inappropriate', 'other') NOT NULL,
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_report (review_id, reporter_id),
+    FOREIGN KEY (review_id) REFERENCES reviews(id) ON DELETE CASCADE,
+    FOREIGN KEY (reporter_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS lists (

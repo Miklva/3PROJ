@@ -73,3 +73,20 @@ body {
     color: c.$red;
   }
 }
+
+.admin-link {
+  background: rgba(167, 139, 250, 0.12);
+  border: 1px solid rgba(167, 139, 250, 0.3);
+  border-radius: 6px;
+  padding: 0.25rem 0.65rem !important;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #a78bfa !important;
+  margin-left: 1.5rem;
+  transition: background 0.2s, border-color 0.2s;
+
+  &:hover {
+    background: rgba(167, 139, 250, 0.22) !important;
+    color: #c4b5fd !important;
+  }
+}

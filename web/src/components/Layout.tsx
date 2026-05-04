@@ -28,6 +28,9 @@ export default function Layout() {
                             <Link to="/search">{t.nav.search}</Link>
                             <Link to="/profile">{t.nav.profile}</Link>
                             <Link to="/settings">{t.nav.settings}</Link>
+                            {user.role === 'admin' && (
+                                <Link to="/admin" className="admin-link">⚙ Admin</Link>
+                            )}
                             <Button variant="nav" onClick={handleLogout}>{t.nav.logout}</Button>
                         </>
                     ) : (

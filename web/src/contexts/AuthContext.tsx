@@ -10,7 +10,8 @@ interface User {
     avatar_url: string | null;
     theme: 'light' | 'dark';
     language: string;
-    role?: string;
+    role: 'user' | 'admin';
+    is_banned: boolean;
 }
 
 interface AuthContextType {

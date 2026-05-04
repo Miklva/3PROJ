@@ -12,9 +12,12 @@ const API = "https://api.themoviedb.org/3";
 type Review = {
   id: number;
   username: string;
+  user_id: number;
   rating: number | null;
   comment: string | null;
   created_at: string;
+  is_featured: boolean;
+  reports_count?: number;
 };
 
 type List = { id: number; name: string };
@@ -50,10 +53,69 @@ function StarRating({ value, onChange }: { value: number; onChange: (n: number) 
   );
 }
 
-function ReviewCard({ review }: { review: Review }) {
+type ReviewCardProps = {
+  review: Review;
+  currentUser: { id: number; role: string } | null;
+  token: string | null;
+  onDeleted: (id: number) => void;
+  onToggleFeatured: (id: number, val: boolean) => void;
+};
+
+const REPORT_REASONS = [
+  { value: 'spoiler', label: '🙈 Spoiler non marqué' },
+  { value: 'insult', label: '🤬 Insultes / harcèlement' },
+  { value: 'inappropriate', label: '🚫 Contenu inapproprié' },
+  { value: 'other', label: '⚠️ Autre' },
+];
+
+function ReviewCard({ review, currentUser, token, onDeleted, onToggleFeatured }: ReviewCardProps) {
+  const [showReport, setShowReport] = useState(false);
+  const [reportReason, setReportReason] = useState('spoiler');
+  const [reporting, setReporting] = useState(false);
+  const [reported, setReported] = useState(false);
+
+  const isAdmin = currentUser?.role === 'admin';
+  const isOwn = currentUser?.id === review.user_id;
+
+  const submitReport = async () => {
+    if (!token) return;
+    setReporting(true);
+    try {
+      await axios.post(`/api/reviews/${review.id}/report`, { reason: reportReason }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setReported(true);
+      setShowReport(false);
+    } catch (err: any) {
+      alert(err.response?.data?.error ?? "Erreur lors du signalement.");
+    } finally {
+      setReporting(false);
+    }
+  };
+
+  const deleteReview = async () => {
+    if (!confirm("Supprimer cet avis ?")) return;
+    try {
+      await axios.delete(`/api/reviews/${review.id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      onDeleted(review.id);
+    } catch { alert("Erreur lors de la suppression."); }
+  };
+
+  const toggleFeatured = async () => {
+    try {
+      const res = await axios.patch(`/api/reviews/${review.id}/feature`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      onToggleFeatured(review.id, res.data.is_featured);
+    } catch { alert("Erreur lors de la mise en avant."); }
+  };
+
   return (
-    <div className="review-card">
+    <div className={`review-card ${review.is_featured ? 'review-card--featured' : ''}`}>
       <div className="review-card__header">
+        {review.is_featured && <span className="review-card__featured">💛 Coup de cœur</span>}
         <strong>{review.username}</strong>
         {review.rating && (
           <span className="review-card__rating">
@@ -63,11 +125,48 @@ function ReviewCard({ review }: { review: Review }) {
         <span className="review-card__date">
           {new Date(review.created_at).toLocaleDateString("fr-FR")}
         </span>
+        <div className="review-card__actions">
+          {isAdmin && (
+            <>
+              <button className="review-action review-action--feature" onClick={toggleFeatured} title={review.is_featured ? "Retirer la mise en avant" : "Mettre en avant"}>
+                {review.is_featured ? "★ Retirer" : "★ Mettre en avant"}
+              </button>
+              <button className="review-action review-action--delete" onClick={deleteReview} title="Supprimer">🗑 Supprimer</button>
+            </>
+          )}
+          {currentUser && !isOwn && !isAdmin && (
+            reported ? (
+              <span className="review-action review-action--reported">✓ Signalé</span>
+            ) : (
+              <button className="review-action review-action--report" onClick={() => setShowReport(p => !p)} title="Signaler">⚑ Signaler</button>
+            )
+          )}
+        </div>
       </div>
       {review.comment && <p className="review-card__comment">{review.comment}</p>}
+      {showReport && (
+        <div className="review-report">
+          <p>Raison du signalement :</p>
+          <div className="review-report__reasons">
+            {REPORT_REASONS.map(r => (
+              <label key={r.value} className={`reason-btn ${reportReason === r.value ? 'reason-btn--active' : ''}`}>
+                <input type="radio" name="reason" value={r.value} checked={reportReason === r.value} onChange={() => setReportReason(r.value)} />
+                {r.label}
+              </label>
+            ))}
+          </div>
+          <div className="review-report__submit">
+            <Button variant="ghost" onClick={submitReport} disabled={reporting}>
+              {reporting ? "Envoi…" : "Confirmer le signalement"}
+            </Button>
+            <Button variant="ghost" onClick={() => setShowReport(false)}>Annuler</Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+
 
 export default function MediaDetail() {
   const { type, id } = useParams<{ type: "movie" | "tv"; id: string }>();
@@ -84,6 +183,9 @@ export default function MediaDetail() {
   const [userRating, setUserRating] = useState(0);
   const [comment, setComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  const handleReviewDeleted = (id: number) => setReviews(prev => prev.filter(r => r.id !== id));
+  const handleToggleFeatured = (id: number, val: boolean) => setReviews(prev => prev.map(r => r.id === id ? { ...r, is_featured: val } : r));
 
   const [lists, setLists] = useState<List[]>([]);
   const [selectedListId, setSelectedListId] = useState<number | "">("");
@@ -323,7 +425,16 @@ export default function MediaDetail() {
           {reviews.length === 0 ? (
             <p className="no-content">Aucun avis pour le moment.</p>
           ) : (
-            reviews.map((r) => <ReviewCard key={r.id} review={r} />)
+            reviews.map((r) => (
+              <ReviewCard
+                key={r.id}
+                review={r}
+                currentUser={user}
+                token={token}
+                onDeleted={handleReviewDeleted}
+                onToggleFeatured={handleToggleFeatured}
+              />
+            ))
           )}
         </div>
       </section>

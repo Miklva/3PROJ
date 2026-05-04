@@ -52,16 +52,15 @@ router.post('/register', registerValidation, async (req, res) => {
 
         const userId = result.insertId;
 
-
         const token = jwt.sign(
-            { id: userId },
+            { id: userId, role: 'user' },
             process.env.JWT_SECRET || 'dev_secret_key_123',
             { expiresIn: '7d' }
         );
 
         res.status(201).json({
             token,
-            user: { id: userId, username, email },
+            user: { id: userId, username, email, role: 'user', is_banned: false },
         });
     } catch (error) {
         console.error(error);
@@ -79,7 +78,7 @@ router.post('/login', loginValidation, async (req, res) => {
 
     try {
         const users = await query(
-            'SELECT id, username, email, password, bio, avatar_url FROM users WHERE email = ?',
+            'SELECT id, username, email, password, bio, avatar_url, role, is_banned FROM users WHERE email = ?',
             [email]
         );
 
@@ -90,6 +89,12 @@ router.post('/login', loginValidation, async (req, res) => {
         }
 
         const user = users[0];
+
+        if (user.is_banned) {
+            return res.status(403).json({
+                errors: [{ msg: 'Votre compte a été banni.' }],
+            });
+        }
         
         if (!user.password) {
             return res.status(400).json({
@@ -106,7 +111,7 @@ router.post('/login', loginValidation, async (req, res) => {
         }
 
         const token = jwt.sign(
-            { id: user.id },
+            { id: user.id, role: user.role },
             process.env.JWT_SECRET || 'dev_secret_key_123',
             { expiresIn: '7d' }
         );
@@ -118,7 +123,9 @@ router.post('/login', loginValidation, async (req, res) => {
                 username: user.username, 
                 email: user.email,
                 bio: user.bio,
-                avatar_url: user.avatar_url
+                avatar_url: user.avatar_url,
+                role: user.role,
+                is_banned: user.is_banned
             },
         });
     } catch (error) {
@@ -135,7 +142,7 @@ router.get('/google/callback',
   passport.authenticate('google', { failureRedirect: '/login', session: false }),
   (req, res) => {
     const token = jwt.sign(
-        { id: req.user.id },
+        { id: req.user.id, role: req.user.role || 'user' },
         process.env.JWT_SECRET || 'dev_secret_key_123',
         { expiresIn: '7d' }
     );
@@ -144,7 +151,9 @@ router.get('/google/callback',
         username: req.user.username,
         email: req.user.email,
         bio: req.user.bio,
-        avatar_url: req.user.avatar_url
+        avatar_url: req.user.avatar_url,
+        role: req.user.role || 'user',
+        is_banned: req.user.is_banned || false
     }));
     res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/oauth-callback?token=${token}&user=${userData}`);
   }
@@ -156,7 +165,7 @@ router.get('/github/callback',
   passport.authenticate('github', { failureRedirect: '/login', session: false }),
   (req, res) => {
     const token = jwt.sign(
-        { id: req.user.id },
+        { id: req.user.id, role: req.user.role || 'user' },
         process.env.JWT_SECRET || 'dev_secret_key_123',
         { expiresIn: '7d' }
     );
@@ -165,7 +174,9 @@ router.get('/github/callback',
         username: req.user.username,
         email: req.user.email,
         bio: req.user.bio,
-        avatar_url: req.user.avatar_url
+        avatar_url: req.user.avatar_url,
+        role: req.user.role || 'user',
+        is_banned: req.user.is_banned || false
     }));
     res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/oauth-callback?token=${token}&user=${userData}`);
   }

@@ -11,6 +11,8 @@ import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import Search from './pages/Search';
 import PublicProfile from './pages/PublicProfile';
+import Admin from './pages/Admin';
+import OAuthCallback from './pages/OAuthCallback';
 
 
 function App() {
@@ -28,6 +30,8 @@ function App() {
                         <Route path="/lists/:id" element={<ProtectedRoute><ListDetail /></ProtectedRoute>} />
                         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                         <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+                        <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
+                        <Route path="/oauth-callback" element={<OAuthCallback />} />
                     </Route>
                 </Routes>
             </Router>

@@ -26,6 +26,9 @@ app.use('/api/reviews', reviewsRoutes);
 const listsRoutes = require('./src/routes/lists');
 app.use('/api/lists', listsRoutes);
 
+const adminRoutes = require('./src/routes/admin');
+app.use('/api/admin', adminRoutes);
+
 app.get('/', (req, res) => {
   res.send('SupContent Server is running!');
 });
