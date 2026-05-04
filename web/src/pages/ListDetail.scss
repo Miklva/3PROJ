@@ -19,159 +19,168 @@
 @keyframes spin { to { transform: rotate(360deg); } }
 
 .list-detail {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
 
-    &__header {
-        margin: 1rem 0 2rem;
+  &__header {
+    margin: 1rem 0 2rem;
+  }
+
+  &__title-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin: 0;
+    }
+  }
+
+  &__badges {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+
+  &__badge {
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 0.2rem 0.6rem;
+    border-radius: 2rem;
+
+    &.badge--default {
+      background: rgba(var(--color-purple-rgb), 0.12);
+      color: c.$light-purple;
+      border: 1px solid rgba(var(--color-purple-rgb), 0.25);
     }
 
-    &__title-row {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        flex-wrap: wrap;
-
-        h1 {
-            font-size: 1.8rem;
-            font-weight: 800;
-            margin: 0;
-        }
+    &.badge--public {
+      background: rgba(34, 197, 94, 0.12);
+      color: c.$green;
+      border: 1px solid rgba(34, 197, 94, 0.25);
     }
 
-    &__badges {
-        display: flex;
-        gap: 0.4rem;
-        flex-wrap: wrap;
+    &.badge--private {
+      background: rgba(var(--color-text-rgb), 0.06);
+      color: c.$text-muted;
+      border: 1px solid c.$border;
     }
+  }
 
-    &__badge {
-        font-size: 0.72rem;
-        font-weight: 600;
-        padding: 0.2rem 0.6rem;
-        border-radius: 2rem;
+  &__desc {
+    margin: 0.5rem 0 0;
+    font-size: 0.9rem;
+    color: c.$text-muted;
+    line-height: 1.5;
+  }
 
-        &.badge--default {
-            background: rgba(var(--color-purple-rgb), 0.12);
-            color: c.$light-purple;
-            border: 1px solid rgba(var(--color-purple-rgb), 0.25);
-        }
+  &__edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 1rem;
+    background: rgba(var(--color-text-rgb), 0.03);
+    border: 1px solid c.$border;
+    border-radius: 12px;
+    margin-bottom: 0.5rem;
+  }
 
-        &.badge--public {
-            background: rgba(34, 197, 94, 0.12);
-            color: c.$green;
-            border: 1px solid rgba(34, 197, 94, 0.25);
-        }
+  &__edit-input,
+  &__edit-textarea {
+    background: rgba(var(--color-text-rgb), 0.05);
+    border: 1px solid c.$border;
+    border-radius: 8px;
+    color: c.$text;
+    padding: 0.6rem 0.9rem;
+    font-size: 0.9rem;
+    font-family: inherit;
+    resize: vertical;
+    transition: border-color 0.2s;
 
-        &.badge--private {
-            background: rgba(var(--color-text-rgb), 0.06);
-            color: c.$text-muted;
-            border: 1px solid c.$border;
-        }
+    &::placeholder {
+      color: c.$text-muted;
     }
-
-    &__desc {
-        margin: 0.5rem 0 0;
-        font-size: 0.9rem;
-        color: c.$text-muted;
-        line-height: 1.5;
+    &:focus {
+      outline: none;
+      border-color: c.$purple;
     }
+  }
 
-    // Formulaire d'édition
-    &__edit-form {
-        display: flex;
-        flex-direction: column;
-        gap: 0.6rem;
-        padding: 1rem;
-        background: rgba(var(--color-text-rgb), 0.03);
-        border: 1px solid c.$border;
-        border-radius: 12px;
-        margin-bottom: 0.5rem;
+  &__toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: c.$text-dim;
+    cursor: pointer;
+    user-select: none;
+
+    input[type="checkbox"] {
+      accent-color: c.$purple;
+      width: 15px;
+      height: 15px;
+      cursor: pointer;
     }
+  }
 
-    &__edit-input,
-    &__edit-textarea {
-        background: rgba(var(--color-text-rgb), 0.05);
-        border: 1px solid c.$border;
-        border-radius: 8px;
-        color: c.$text;
-        padding: 0.6rem 0.9rem;
-        font-size: 0.9rem;
-        font-family: inherit;
-        resize: vertical;
-        transition: border-color 0.2s;
-
-        &::placeholder { color: c.$text-muted; }
-        &:focus { outline: none; border-color: c.$purple; }
-    }
-
-    &__toggle {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: 0.85rem;
-        color: c.$text-dim;
-        cursor: pointer;
-        user-select: none;
-
-        input[type="checkbox"] {
-            accent-color: c.$purple;
-            width: 15px;
-            height: 15px;
-            cursor: pointer;
-        }
-    }
-
-    &__edit-actions {
-        display: flex;
-        gap: 0.5rem;
-    }
+  &__edit-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
 }
 
 .list-count {
-    color: c.$text-muted;
-    font-size: 0.9rem;
-    margin: 0.5rem 0 0;
+  color: c.$text-muted;
+  font-size: 0.9rem;
+  margin: 0.5rem 0 0;
 }
 
 .list-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-    gap: 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 1rem;
 
-    &__item {
-        position: relative;
+  &__item {
+    position: relative;
 
-        &:hover .list-grid__remove { opacity: 1; }
+    &:hover .list-grid__remove {
+      opacity: 1;
     }
+  }
 
-    &__remove {
-        position: absolute;
-        top: 0.4rem;
-        right: 0.4rem;
-        width: 24px;
-        height: 24px;
-        border-radius: 50%;
-        background: rgba(0, 0, 0, 0.75);
-        color: #fff;
-        border: none;
-        font-size: 0.7rem;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        opacity: 0;
-        transition: opacity 0.15s, background 0.15s;
-        z-index: 2;
+  &__remove {
+    position: absolute;
+    top: 0.4rem;
+    right: 0.4rem;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.75);
+    color: #fff;
+    border: none;
+    font-size: 0.7rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.15s, background 0.15s;
+    z-index: 2;
+    padding: 0;
 
-        &:hover { background: rgba(229, 9, 20, 0.85); }
+    &:hover {
+      background: rgba(229, 9, 20, 0.85);
     }
+  }
 }
 
 .list-empty {
-    color: c.$text-muted;
-    text-align: center;
-    padding: 3rem;
-    font-size: 0.9rem;
+  color: c.$text-muted;
+  text-align: center;
+  padding: 3rem;
+  font-size: 0.9rem;
 }

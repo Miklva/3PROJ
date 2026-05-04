@@ -113,7 +113,6 @@ router.get('/stats', authMiddleware, async (req, res) => {
 
 router.get('/search', async (req, res) => {
     const { q } = req.query;
-    if (!q?.trim()) return res.json([]);
     try {
         const results = await query(
             `SELECT l.id, l.name, l.description, u.username,
@@ -124,32 +123,9 @@ router.get('/search', async (req, res) => {
              WHERE l.name LIKE ? AND l.is_default = FALSE AND l.is_public = TRUE
              GROUP BY l.id
              LIMIT 20`,
-            [`%${q.trim()}%`]
+            [`%${q?.trim() ?? ''}%`]
         );
         res.json(results);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Erreur serveur.' });
-    }
-});
-
-router.post('/', authMiddleware, async (req, res) => {
-    const { name, description, is_public } = req.body;
-    if (!name?.trim()) return res.status(400).json({ error: 'Nom requis.' });
-
-    try {
-        const result = await query(
-            'INSERT INTO lists (user_id, name, description, is_public) VALUES (?, ?, ?, ?)',
-            [req.user.id, name.trim(), description?.trim() || null, is_public ? 1 : 0]
-        );
-        res.status(201).json({
-            id: result.insertId,
-            name: name.trim(),
-            description: description?.trim() || null,
-            is_default: false,
-            is_public: !!is_public,
-            item_count: 0,
-        });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Erreur serveur.' });
@@ -175,18 +151,8 @@ router.get('/:id', async (req, res) => {
         if (lists.length === 0) return res.status(404).json({ error: 'Liste introuvable.' });
 
         const list = lists[0];
+        const isOwner = userId === list.user_id;
 
-        const token = req.headers.authorization?.split(' ')[1];
-        let currentUserId = null;
-        if (token) {
-            try {
-                const jwt = require('jsonwebtoken');
-                const decoded = jwt.verify(token, process.env.JWT_SECRET);
-                currentUserId = decoded.id;
-            } catch (_) {}
-        }
-
-        const isOwner = currentUserId === list.user_id;
         if (!list.is_public && !isOwner) {
             return res.status(403).json({ error: 'Liste privée.' });
         }
@@ -197,6 +163,29 @@ router.get('/:id', async (req, res) => {
         );
 
         res.json({ ...list, items, is_owner: isOwner });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Erreur serveur.' });
+    }
+});
+
+router.post('/', authMiddleware, async (req, res) => {
+    const { name, description, is_public } = req.body;
+    if (!name?.trim()) return res.status(400).json({ error: 'Nom requis.' });
+
+    try {
+        const result = await query(
+            'INSERT INTO lists (user_id, name, description, is_public) VALUES (?, ?, ?, ?)',
+            [req.user.id, name.trim(), description?.trim() || null, is_public ? 1 : 0]
+        );
+        res.status(201).json({
+            id: result.insertId,
+            name: name.trim(),
+            description: description?.trim() || null,
+            is_default: false,
+            is_public: !!is_public,
+            item_count: 0,
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Erreur serveur.' });
