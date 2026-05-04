@@ -28,7 +28,7 @@ function App() {
                         <Route path="/media/:type/:id" element={<MediaDetail />} />
                         <Route path="/search" element={<Search />} />
                         <Route path="/profile/:id" element={<PublicProfile />} />
-                        <Route path="/lists/:id" element={<ProtectedRoute><ListDetail /></ProtectedRoute>} />
+                        <Route path="/lists/:id" element={<ListDetail />} />
                         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                         <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
                         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />

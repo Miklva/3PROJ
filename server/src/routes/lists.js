@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const jwt = require('jsonwebtoken');
 const { query } = require('../config/database');
 const authMiddleware = require('../middleware/auth');
 
@@ -157,6 +158,16 @@ router.post('/', authMiddleware, async (req, res) => {
 
 router.get('/:id', async (req, res) => {
     try {
+        const token = req.headers.authorization?.split(' ')[1];
+        let userId = null;
+
+        if (token) {
+            try {
+                const decoded = jwt.verify(token, process.env.JWT_SECRET);
+                userId = decoded.id;
+            } catch {}
+        }
+
         const lists = await query(
             'SELECT id, user_id, name, description, is_default, is_public FROM lists WHERE id = ?',
             [req.params.id]

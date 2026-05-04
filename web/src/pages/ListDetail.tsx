@@ -30,7 +30,6 @@ export default function ListDetail() {
 
   const [list, setList] = useState<ListData | null>(null);
   const [loading, setLoading] = useState(true);
-
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState("");
   const [editDesc, setEditDesc] = useState("");
@@ -47,7 +46,7 @@ export default function ListDetail() {
         setEditDesc(res.data.description || "");
         setEditPublic(res.data.is_public);
       })
-      .catch(() => navigate("/profile"))
+      .catch(() => navigate("/"))
       .finally(() => setLoading(false));
   }, [id]);
 
@@ -70,14 +69,21 @@ export default function ListDetail() {
     }
   };
 
-  const handleRemoveItem = async (tmdb_id: number) => {
+  const handleRemoveItem = async (tmdb_id: number, media_type: string) => {
     if (!list) return;
     try {
       await axios.delete(`/api/lists/${list.id}/items/${tmdb_id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setList((prev) =>
-        prev ? { ...prev, items: prev.items.filter((i) => i.tmdb_id !== tmdb_id) } : null
+        prev
+          ? {
+              ...prev,
+              items: prev.items.filter(
+                (i) => !(i.tmdb_id === tmdb_id && i.media_type === media_type)
+              ),
+            }
+          : null
       );
     } catch (err) {
       console.error("Erreur suppression item", err);
@@ -95,7 +101,9 @@ export default function ListDetail() {
 
   return (
     <div className="list-detail">
-      <Button variant="back" onClick={() => navigate("/profile")}>Retour</Button>
+      <Button variant="back" onClick={() => navigate(-1)}>
+        ← Retour
+      </Button>
 
       <div className="list-detail__header">
         {isEditing ? (
@@ -122,8 +130,12 @@ export default function ListDetail() {
               <span>Rendre publique</span>
             </label>
             <div className="list-detail__edit-actions">
-              <Button variant="ghost" onClick={handleSave}>Sauvegarder</Button>
-              <Button variant="ghost" onClick={() => setIsEditing(false)}>Annuler</Button>
+              <Button variant="ghost" onClick={handleSave}>
+                Sauvegarder
+              </Button>
+              <Button variant="ghost" onClick={() => setIsEditing(false)}>
+                Annuler
+              </Button>
             </div>
           </div>
         ) : (
@@ -132,16 +144,24 @@ export default function ListDetail() {
               <h1>{list.name}</h1>
               <div className="list-detail__badges">
                 {list.is_default && (
-                  <span className="list-detail__badge badge--default">Liste par défaut</span>
+                  <span className="list-detail__badge badge--default">
+                    Liste par défaut
+                  </span>
                 )}
                 {!list.is_default && (
-                  <span className={`list-detail__badge ${list.is_public ? "badge--public" : "badge--private"}`}>
+                  <span
+                    className={`list-detail__badge ${
+                      list.is_public ? "badge--public" : "badge--private"
+                    }`}
+                  >
                     {list.is_public ? "Publique" : "Privée"}
                   </span>
                 )}
               </div>
               {list.is_owner && !list.is_default && (
-                <Button variant="ghost" onClick={() => setIsEditing(true)}>Modifier</Button>
+                <Button variant="ghost" onClick={() => setIsEditing(true)}>
+                  Modifier
+                </Button>
               )}
             </div>
             {list.description && (
@@ -159,7 +179,10 @@ export default function ListDetail() {
       ) : (
         <div className="list-grid">
           {list.items.map((item) => (
-            <div key={`${item.tmdb_id}-${item.media_type}`} className="list-grid__item">
+            <div
+              key={`${item.tmdb_id}-${item.media_type}`}
+              className="list-card-wrapper"
+            >
               <MediaCard
                 media={{
                   id: item.tmdb_id,
@@ -169,13 +192,13 @@ export default function ListDetail() {
                 }}
               />
               {list.is_owner && (
-                <button
-                  className="list-grid__remove"
-                  onClick={() => handleRemoveItem(item.tmdb_id)}
-                  title="Retirer de la liste"
+                <Button
+                  variant="icon"
+                  className="list-card-remove"
+                  onClick={() => handleRemoveItem(item.tmdb_id, item.media_type)}
                 >
-                   x
-                </button>
+                  ✕
+                </Button>
               )}
             </div>
           ))}
