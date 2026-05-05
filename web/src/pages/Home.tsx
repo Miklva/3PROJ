@@ -13,14 +13,7 @@ export default function Home() {
     useEffect(() => {
         const fetchFeed = async () => {
             try {
-                const res = await axios.get(
-                    "https://api.themoviedb.org/3/trending/all/week",
-                    {
-                        params: {
-                            api_key: import.meta.env.VITE_TMDB_API_KEY
-                        }
-                    }
-                );
+                const res = await axios.get("/api/media/trending");
                 limited ? setFeed(res.data.results.slice(0, 5)) : setFeed(res.data.results.slice(0, 20));
             } catch (error) { console.error(error) }
         };

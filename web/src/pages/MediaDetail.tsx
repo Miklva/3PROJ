@@ -7,7 +7,7 @@ import Button from "../components/Button";
 import "./MediaDetail.scss";
 
 const IMG = "https://image.tmdb.org/t/p";
-const API = "https://api.themoviedb.org/3";
+
 
 type Review = {
   id: number;
@@ -197,10 +197,8 @@ export default function MediaDetail() {
     if (!type || !id) return;
     setLoading(true);
     axios
-      .get(`${API}/${type}/${id}`, {
-        params: { api_key: import.meta.env.VITE_TMDB_API_KEY, language: "fr-FR", append_to_response: "credits" },
-      })
-      .then((res) => setMedia({ ...res.data, media_type: type }))
+      .get(`/api/media/${type}/${id}`)
+      .then((res) => setMedia(res.data))
       .catch(() => setError("Impossible de charger les détails."))
       .finally(() => setLoading(false));
   }, [type, id]);

@@ -75,3 +75,10 @@ CREATE TABLE IF NOT EXISTS list_items (
     FOREIGN KEY (list_id) REFERENCES lists(id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS media_cache (
+    tmdb_id     INT NOT NULL,
+    media_type  ENUM('movie', 'tv') NOT NULL,
+    data        LONGTEXT NOT NULL,
+    fetched_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (tmdb_id, media_type)
+);

@@ -28,8 +28,6 @@ const EXCLUDED_KEYWORDS = [
   "césar",
   "festival",
 ];
-const TMDB_KEY = import.meta.env.VITE_TMDB_API_KEY;
-const TMDB_API = "https://api.themoviedb.org/3";
 const currentYear = new Date().getFullYear();
 const years = Array.from(
   { length: currentYear - 1989 },
@@ -66,9 +64,7 @@ export default function Search() {
   useEffect(() => {
     if (isMediaType || isPerson) {
       axios
-        .get(`${TMDB_API}/genre/movie/list`, {
-          params: { api_key: TMDB_KEY, language: "fr-FR" },
-        })
+        .get(`/api/media/genres/movie`)
         .then((res) => setGenres(res.data.genres));
     }
     if (isMediaType) {
@@ -83,12 +79,10 @@ export default function Search() {
       if (isMediaType) {
         const hasFilters = !!(selectedGenre || selectedYear);
         const endpoint = query.trim()
-          ? `${TMDB_API}/search/${type}`
-          : `${TMDB_API}/discover/${type}`;
+          ? `/api/media/search/${type}`
+          : `/api/media/discover/${type}`;
 
         const params: any = {
-          api_key: TMDB_KEY,
-          language: "fr-FR",
           page,
           ...(query.trim() && { query }),
           ...(selectedGenre && { with_genres: selectedGenre }),
@@ -107,22 +101,20 @@ export default function Search() {
       } else if (isPerson) {
         if (!query.trim()) {
           const params: any = {
-            api_key: TMDB_KEY,
-            language: "fr-FR",
             sort_by: "popularity.desc",
             page,
             ...(selectedGenre && { with_genres: selectedGenre }),
             ...(selectedYear && { primary_release_year: selectedYear }),
           };
-          const res = await axios.get(`${TMDB_API}/discover/movie`, { params });
+          const res = await axios.get(`/api/media/discover/movie`, { params });
           setCurrentPerson(null);
           setMediaResults(
             res.data.results.map((r: any) => ({ ...r, media_type: "movie" })),
           );
           setTotalPages(Math.min(res.data.total_pages, 500));
         } else {
-          const personRes = await axios.get(`${TMDB_API}/search/person`, {
-            params: { api_key: TMDB_KEY, language: "fr-FR", query },
+          const personRes = await axios.get(`/api/media/person/search`, {
+            params: { query },
           });
           const topPerson = personRes.data.results[0];
           if (!topPerson) {
@@ -134,10 +126,7 @@ export default function Search() {
           }
 
           const creditsRes = await axios.get(
-            `${TMDB_API}/person/${topPerson.id}/combined_credits`,
-            {
-              params: { api_key: TMDB_KEY, language: "fr-FR" },
-            },
+            `/api/media/person/${topPerson.id}/credits`
           );
 
           const source =
