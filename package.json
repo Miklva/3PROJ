@@ -1,0 +1,18 @@
+{
+  "name": "kazaerp",
+  "version": "2.0.0",
+  "description": "Home ERP Alimentaire avec SQLite et Analyses Financières",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "sqlite3": "^5.1.7"
+  },
+  "author": "Antigravity IDE & Rayan",
+  "license": "ISC"
+}
