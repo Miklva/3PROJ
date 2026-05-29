@@ -4,6 +4,7 @@ import axios from "axios";
 import { useAuth } from "../contexts/AuthContext";
 import type { MediaDetail as MediaDetailType } from "../types";
 import Button from "../components/Button";
+import ReviewInteractions from "../components/ReviewInteractions";
 import "./MediaDetail.scss";
 
 const IMG = "https://image.tmdb.org/t/p";
@@ -163,6 +164,13 @@ function ReviewCard({ review, currentUser, token, onDeleted, onToggleFeatured }:
           </div>
         </div>
       )}
+
+      <ReviewInteractions
+        reviewId={review.id}
+        token={token}
+        currentUserId={currentUser?.id}
+        currentUserRole={currentUser?.role}
+      />
     </div>
   );
 }

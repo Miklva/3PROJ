@@ -26,6 +26,8 @@ export default function Layout() {
                     {user ? (
                         <>
                             <Link to="/search">{t.nav.search}</Link>
+                            <Link to="/feed">Fil d'actu</Link>
+                            <Link to="/messages">Messages</Link>
                             <Link to="/profile">{t.nav.profile}</Link>
                             <Link to="/settings">{t.nav.settings}</Link>
                             {user.role === 'admin' && (

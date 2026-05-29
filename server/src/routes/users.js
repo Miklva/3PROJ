@@ -76,7 +76,31 @@ router.get('/:id', async (req, res) => {
             [req.params.id]
         );
         if (users.length === 0) return res.status(404).json({ error: 'Utilisateur introuvable.' });
-        res.json(users[0]);
+
+        const u = users[0];
+        const [followers] = await query('SELECT COUNT(*) as count FROM subscriptions WHERE following_id = ?', [u.id]);
+        const [following] = await query('SELECT COUNT(*) as count FROM subscriptions WHERE follower_id = ?', [u.id]);
+
+        res.json({
+            ...u,
+            followers_count: followers.count,
+            following_count: following.count,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Erreur serveur.' });
+    }
+});
+
+router.get('/:id/is-following', authMiddleware, async (req, res) => {
+    const targetId = req.params.id;
+    const userId   = req.user.id;
+    try {
+        const rows = await query(
+            'SELECT id FROM subscriptions WHERE follower_id = ? AND following_id = ?',
+            [userId, targetId]
+        );
+        res.json({ isFollowing: rows.length > 0 });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Erreur serveur.' });

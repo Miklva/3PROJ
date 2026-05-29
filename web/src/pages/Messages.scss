@@ -1,0 +1,341 @@
+@use "../colors" as *;
+
+.messages-page {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  height: calc(100vh - 64px); // hauteur navbar
+  overflow: hidden;
+
+  @media (max-width: 680px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid $border;
+  border-top-color: $purple;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.msg-sidebar {
+  border-right: 1px solid $border;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: $bg-alt;
+
+  &__header {
+    padding: 1rem 1.2rem 0.75rem;
+    border-bottom: 1px solid $border;
+
+    h2 {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: $text;
+    }
+  }
+
+  &__loading {
+    display: flex;
+    justify-content: center;
+    padding: 2rem;
+  }
+
+  &__empty {
+    padding: 1.5rem 1.2rem;
+    color: $text-muted;
+    font-size: 0.88rem;
+
+    p { margin: 0 0 0.4rem; }
+  }
+
+  &__hint {
+    color: $text-muted;
+    font-style: italic;
+    font-size: 0.82rem;
+  }
+}
+
+.msg-conv-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.msg-conv-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  border-bottom: 1px solid $border;
+  transition: background 0.15s;
+
+  &:hover { background: rgba(var(--color-purple-rgb), 0.07); }
+
+  &--active {
+    background: rgba(var(--color-purple-rgb), 0.12);
+    border-left: 3px solid $purple;
+    padding-left: calc(1rem - 3px);
+  }
+
+  &__body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  &__name {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: $text;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__time {
+    font-size: 0.72rem;
+    color: $text-muted;
+    white-space: nowrap;
+    margin-left: 0.5rem;
+  }
+
+  &__preview {
+    font-size: 0.82rem;
+    color: $text-muted;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 0.15rem;
+  }
+
+  &__you {
+    color: $purple;
+    font-weight: 500;
+  }
+
+  &__badge {
+    background: $purple;
+    color: #fff;
+    border-radius: 99px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 2px 7px;
+    min-width: 20px;
+    text-align: center;
+  }
+}
+
+.msg-chat {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: $bg;
+
+  &__empty,
+  &__loading,
+  &__error {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: $text-muted;
+    gap: 0.5rem;
+    padding: 2rem;
+    text-align: center;
+  }
+
+  &__empty-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  &__empty-hint {
+    font-size: 0.82rem;
+    color: $text-muted;
+    max-width: 320px;
+    line-height: 1.5;
+  }
+
+  &__error { color: $light-red; }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.85rem 1.25rem;
+    border-bottom: 1px solid $border;
+    background: $bg-alt;
+  }
+
+  &__partner-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: $text;
+  }
+
+  &__messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__no-msg {
+    text-align: center;
+    color: $text-muted;
+    font-size: 0.88rem;
+    margin: auto;
+  }
+
+  // Input area
+  &__input-area {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.5rem;
+    padding: 0.85rem 1.25rem;
+    border-top: 1px solid $border;
+    background: $bg-alt;
+  }
+
+  &__input {
+    flex: 1;
+    background: $bg;
+    border: 1px solid $border;
+    border-radius: 20px;
+    padding: 0.55rem 1rem;
+    color: $text;
+    font-size: 0.9rem;
+    resize: none;
+    line-height: 1.4;
+    max-height: 120px;
+    overflow-y: auto;
+    transition: border-color 0.2s;
+
+    &:focus {
+      outline: none;
+      border-color: $purple;
+    }
+
+    &::placeholder { color: $text-muted; }
+  }
+
+  &__send {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: $purple;
+    color: #fff;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.2s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover:not(:disabled) { background: $purple-hover; transform: scale(1.05); }
+    &:disabled { background: $border; cursor: default; }
+  }
+}
+
+.msg-bubble {
+  max-width: 70%;
+  display: flex;
+  flex-direction: column;
+
+  &--mine {
+    align-self: flex-end;
+    align-items: flex-end;
+
+    .msg-bubble__text {
+      background: $purple;
+      color: #fff;
+      border-radius: 18px 18px 4px 18px;
+    }
+  }
+
+  &--theirs {
+    align-self: flex-start;
+    align-items: flex-start;
+
+    .msg-bubble__text {
+      background: $bg-alt;
+      color: $text;
+      border: 1px solid $border;
+      border-radius: 18px 18px 18px 4px;
+    }
+  }
+
+  &__text {
+    padding: 0.55rem 0.9rem;
+    font-size: 0.9rem;
+    line-height: 1.45;
+    word-break: break-word;
+    white-space: pre-wrap;
+  }
+
+  &__time {
+    font-size: 0.7rem;
+    color: $text-muted;
+    margin-top: 3px;
+    padding: 0 4px;
+  }
+}
+
+.msg-avatar {
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+
+  &--placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(var(--color-purple-rgb), 0.2);
+    color: $purple;
+    font-weight: 700;
+  }
+}
+
+.msg-chat__mutual-hint {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: rgba(var(--color-purple-rgb), 0.1);
+  border: 1px solid rgba(var(--color-purple-rgb), 0.3);
+  border-radius: 8px;
+  text-align: center;
+
+  p { margin: 0 0 0.75rem; font-size: 0.88rem; color: var(--color-text-dim); }
+}
+
+.msg-chat__follow-link {
+  display: inline-block;
+  padding: 0.45rem 1rem;
+  background: var(--color-purple);
+  color: #fff;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: background 0.2s;
+
+  &:hover { background: var(--color-purple-hover, #7c3aed); }
+}

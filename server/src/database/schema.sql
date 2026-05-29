@@ -41,6 +41,26 @@ CREATE TABLE IF NOT EXISTS reviews (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS review_likes (
+    id         INT AUTO_INCREMENT PRIMARY KEY,
+    review_id  INT NOT NULL,
+    user_id    INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_like (review_id, user_id),
+    FOREIGN KEY (review_id) REFERENCES reviews(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id)   REFERENCES users(id)   ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS review_comments (
+    id         INT AUTO_INCREMENT PRIMARY KEY,
+    review_id  INT NOT NULL,
+    user_id    INT NOT NULL,
+    content    TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (review_id) REFERENCES reviews(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id)   REFERENCES users(id)   ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS reports (
     id          INT AUTO_INCREMENT PRIMARY KEY,
     review_id   INT NOT NULL,
@@ -75,6 +95,7 @@ CREATE TABLE IF NOT EXISTS list_items (
     FOREIGN KEY (list_id) REFERENCES lists(id) ON DELETE CASCADE
 );
 
+<<<<<<< HEAD
 CREATE TABLE IF NOT EXISTS media_cache (
     tmdb_id     INT NOT NULL,
     media_type  ENUM('movie', 'tv') NOT NULL,
@@ -82,3 +103,18 @@ CREATE TABLE IF NOT EXISTS media_cache (
     fetched_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (tmdb_id, media_type)
 );
+=======
+CREATE TABLE IF NOT EXISTS messages (
+    id          INT AUTO_INCREMENT PRIMARY KEY,
+    sender_id   INT NOT NULL,
+    receiver_id INT NOT NULL,
+    content     TEXT NOT NULL,
+    is_read     BOOLEAN DEFAULT FALSE,
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (sender_id)   REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE INDEX idx_messages_conversation ON messages (sender_id, receiver_id);
+CREATE INDEX idx_messages_receiver     ON messages (receiver_id, is_read);
+>>>>>>> c0394e0 (Message + like et sous commentaire)

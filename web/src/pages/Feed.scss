@@ -1,0 +1,268 @@
+@use "../colors" as * ;
+
+// ── Page ──────────────────────────────────────────────────────────────────────
+.feed-page {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 2rem 1rem 4rem;
+
+  &__header {
+    margin-bottom: 2rem;
+
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: $text;
+      margin: 0 0 0.25rem;
+    }
+  }
+
+  &__sub {
+    color: $text-muted;
+    font-size: 0.9rem;
+    margin: 0;
+  }
+}
+
+// ── Loading ───────────────────────────────────────────────────────────────────
+.feed-loading {
+  display: flex;
+  justify-content: center;
+  padding: 4rem 0;
+
+  .spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid $border;
+    border-top-color: $purple;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+// ── Empty state ───────────────────────────────────────────────────────────────
+.feed-empty {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: $text-dim;
+
+  &__icon {
+    display: block;
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  p { margin: 0.3rem 0; font-size: 1rem; }
+
+  &__btn {
+    margin-top: 1.5rem;
+    padding: 0.6rem 1.4rem;
+    background: $purple;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.2s;
+
+    &:hover { background: $purple-hover; }
+  }
+}
+
+// ── Feed list ─────────────────────────────────────────────────────────────────
+.feed-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+// ── Card ──────────────────────────────────────────────────────────────────────
+.feed-card {
+  background: $bg-alt;
+  border: 1px solid $border;
+  border-radius: 12px;
+  padding: 1.1rem 1.25rem;
+  transition: border-color 0.2s;
+
+  &:hover { border-color: $border-hover; }
+
+  &--list {
+    border-left: 3px solid rgba(var(--color-purple-rgb), 0.6);
+  }
+
+  // Header (avatar + username + time)
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.7rem;
+  }
+
+  &__user {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-decoration: none;
+    color: $text;
+
+    &:hover strong { text-decoration: underline; }
+  }
+
+  &__time {
+    font-size: 0.78rem;
+    color: $text-muted;
+    white-space: nowrap;
+  }
+
+  &__action {
+    margin: 0 0 0.5rem;
+    font-size: 0.92rem;
+    color: $text-dim;
+  }
+
+  &__type {
+    color: $purple;
+    font-weight: 600;
+  }
+
+  &__comment {
+    margin: 0.5rem 0;
+    padding: 0.6rem 0.8rem;
+    border-left: 3px solid $border-hover;
+    background: rgba(var(--color-bg-rgb), 0.5);
+    border-radius: 4px;
+    font-size: 0.9rem;
+    color: $text-dim;
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  // Footer (link + actions)
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 0.8rem;
+    gap: 0.5rem;
+  }
+
+  &__link {
+    font-size: 0.82rem;
+    color: $purple;
+    text-decoration: none;
+
+    &:hover { text-decoration: underline; }
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  &__like {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0;
+    color: $text-muted;
+    transition: transform 0.15s;
+
+    span { font-size: 0.8rem; color: $text-dim; }
+
+    &:hover { transform: scale(1.15); }
+    &--active span { color: $text; }
+  }
+
+  &__comment-count {
+    font-size: 0.82rem;
+    color: $text-muted;
+    text-decoration: none;
+
+    &:hover { color: $text-dim; }
+  }
+
+  // List add variant
+  &__list-body {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+  }
+
+  &__poster {
+    width: 44px;
+    height: 66px;
+    object-fit: cover;
+    border-radius: 4px;
+    flex-shrink: 0;
+
+    &--empty {
+      width: 44px;
+      height: 66px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: $border;
+      border-radius: 4px;
+      font-size: 1.4rem;
+    }
+  }
+}
+
+// ── Avatar ────────────────────────────────────────────────────────────────────
+.feed-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+
+  &--placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(var(--color-purple-rgb), 0.25);
+    color: $purple;
+    font-weight: 700;
+    font-size: 0.9rem;
+  }
+}
+
+// ── Stars ─────────────────────────────────────────────────────────────────────
+.feed-stars {
+  display: inline-flex;
+  gap: 1px;
+
+  .star {
+    color: $border-hover;
+    font-size: 0.9rem;
+
+    &--on { color: $yellow; }
+  }
+}
+
+// ── Load more ─────────────────────────────────────────────────────────────────
+.feed-more {
+  width: 100%;
+  padding: 0.75rem;
+  background: none;
+  border: 1px dashed $border;
+  border-radius: 10px;
+  color: $text-dim;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+
+  &:hover:not(:disabled) {
+    border-color: $purple;
+    color: $purple;
+  }
+
+  &:disabled { opacity: 0.5; cursor: default; }
+}

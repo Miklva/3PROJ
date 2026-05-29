@@ -1,0 +1,221 @@
+@use "../colors" as *;
+
+.review-interactions {
+  margin-top: 0.75rem;
+  border-top: 1px solid $border;
+  padding-top: 0.6rem;
+}
+
+// ── Action buttons ────────────────────────────────────────────────────────────
+.ri-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.ri-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 20px;
+  padding: 4px 10px;
+  font-size: 0.88rem;
+  color: $text-muted;
+  cursor: pointer;
+  transition: all 0.15s;
+
+  span { font-size: 0.82rem; }
+
+  &:hover:not(:disabled) {
+    border-color: $border-hover;
+    color: $text-dim;
+  }
+
+  &:disabled { cursor: default; opacity: 0.5; }
+
+  &--liked {
+    color: #e11d48;
+    border-color: rgba(225, 29, 72, 0.3);
+
+    &:hover { border-color: rgba(225, 29, 72, 0.5); }
+  }
+
+  &--comment {
+    &:hover { border-color: $border-hover; }
+  }
+
+  &__label { font-size: 0.8rem; color: $text-muted; }
+}
+
+// ── Comments section ──────────────────────────────────────────────────────────
+.ri-comments {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ri-loading {
+  display: flex;
+  justify-content: center;
+  padding: 0.75rem;
+}
+
+.spinner-sm {
+  width: 20px;
+  height: 20px;
+  border: 2px solid $border;
+  border-top-color: $purple;
+  border-radius: 50%;
+  animation: spin-sm 0.7s linear infinite;
+}
+@keyframes spin-sm { to { transform: rotate(360deg); } }
+
+.ri-no-comments {
+  font-size: 0.82rem;
+  color: $text-muted;
+  font-style: italic;
+  margin: 0;
+  padding: 0.25rem 0;
+}
+
+// ── Comment list ──────────────────────────────────────────────────────────────
+.ri-comment-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ri-comment {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+
+  &__body {
+    flex: 1;
+    min-width: 0;
+    background: $bg-alt;
+    border: 1px solid $border;
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+  }
+
+  &__top {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.2rem;
+  }
+
+  &__author {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: $text;
+    text-decoration: none;
+
+    &:hover { text-decoration: underline; color: $purple; }
+  }
+
+  &__time {
+    font-size: 0.72rem;
+    color: $text-muted;
+  }
+
+  &__delete {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: $text-muted;
+    font-size: 0.7rem;
+    cursor: pointer;
+    padding: 0 2px;
+    line-height: 1;
+    transition: color 0.15s;
+
+    &:hover { color: $light-red; }
+  }
+
+  &__text {
+    margin: 0;
+    font-size: 0.88rem;
+    color: $text-dim;
+    line-height: 1.45;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+}
+
+// ── Comment form ──────────────────────────────────────────────────────────────
+.ri-comment-form {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-end;
+  margin-top: 0.25rem;
+
+  textarea {
+    flex: 1;
+    background: $bg;
+    border: 1px solid $border;
+    border-radius: 8px;
+    color: $text;
+    font-size: 0.88rem;
+    padding: 0.5rem 0.75rem;
+    resize: none;
+    line-height: 1.4;
+    transition: border-color 0.2s;
+
+    &:focus {
+      outline: none;
+      border-color: $purple;
+    }
+
+    &::placeholder { color: $text-muted; }
+  }
+
+  &__submit {
+    padding: 0.45rem 0.9rem;
+    background: $purple;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.2s;
+
+    &:hover:not(:disabled) { background: $purple-hover; }
+    &:disabled { background: $border; cursor: default; }
+  }
+}
+
+.ri-guest-msg {
+  font-size: 0.82rem;
+  color: $text-muted;
+  margin: 0.25rem 0 0;
+
+  a { color: $purple; text-decoration: none; &:hover { text-decoration: underline; } }
+}
+
+// ── Avatar ────────────────────────────────────────────────────────────────────
+.ri-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+
+  &--placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(var(--color-purple-rgb), 0.2);
+    color: $purple;
+    font-weight: 700;
+    font-size: 0.75rem;
+  }
+}

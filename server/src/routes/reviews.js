@@ -4,6 +4,114 @@ const { query } = require('../config/database');
 const authMiddleware = require('../middleware/auth');
 const adminMiddleware = require('../middleware/admin');
 
+// POST /api/reviews/:id/like
+router.post('/:id/like', authMiddleware, async (req, res) => {
+    const reviewId = parseInt(req.params.id);
+    const userId   = req.user.id;
+    if (isNaN(reviewId)) return res.status(400).json({ error: 'ID invalide.' });
+    try {
+        const review = await query('SELECT id FROM reviews WHERE id = ?', [reviewId]);
+        if (review.length === 0) return res.status(404).json({ error: 'Critique introuvable.' });
+        await query('INSERT IGNORE INTO review_likes (review_id, user_id) VALUES (?, ?)', [reviewId, userId]);
+        const [{ cnt }] = await query('SELECT COUNT(*) AS cnt FROM review_likes WHERE review_id = ?', [reviewId]);
+        res.json({ liked: true, likes_count: Number(cnt) });
+    } catch (error) { console.error(error); res.status(500).json({ error: 'Erreur serveur.' }); }
+});
+
+// DELETE /api/reviews/:id/like
+router.delete('/:id/like', authMiddleware, async (req, res) => {
+    const reviewId = parseInt(req.params.id);
+    const userId   = req.user.id;
+    if (isNaN(reviewId)) return res.status(400).json({ error: 'ID invalide.' });
+    try {
+        await query('DELETE FROM review_likes WHERE review_id = ? AND user_id = ?', [reviewId, userId]);
+        const [{ cnt }] = await query('SELECT COUNT(*) AS cnt FROM review_likes WHERE review_id = ?', [reviewId]);
+        res.json({ liked: false, likes_count: Number(cnt) });
+    } catch (error) { console.error(error); res.status(500).json({ error: 'Erreur serveur.' }); }
+});
+
+// GET /api/reviews/:id/like/status  — fonctionne avec ou sans auth
+router.get('/:id/like/status', async (req, res) => {
+    const reviewId = parseInt(req.params.id);
+    if (isNaN(reviewId)) return res.status(400).json({ error: 'ID invalide.' });
+
+    let userId = null;
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+        try {
+            const jwt = require('jsonwebtoken');
+            const decoded = jwt.verify(authHeader.split(' ')[1], process.env.JWT_SECRET);
+            userId = decoded.id;
+        } catch { /* token invalide ou absent — on ignore */ }
+    }
+
+    try {
+        const [{ cnt }] = await query('SELECT COUNT(*) AS cnt FROM review_likes WHERE review_id = ?', [reviewId]);
+        let liked = false;
+        if (userId) {
+            const rows = await query('SELECT id FROM review_likes WHERE review_id = ? AND user_id = ?', [reviewId, userId]);
+            liked = rows.length > 0;
+        }
+        res.json({ liked, likes_count: Number(cnt) });
+    } catch (error) { console.error(error); res.status(500).json({ error: 'Erreur serveur.' }); }
+});
+
+// GET /api/reviews/:id/comments
+router.get('/:id/comments', async (req, res) => {
+    const reviewId = parseInt(req.params.id);
+    if (isNaN(reviewId)) return res.status(400).json({ error: 'ID invalide.' });
+    try {
+        const comments = await query(
+            `SELECT rc.id, rc.content, rc.created_at,
+                    u.id AS user_id, u.username, u.avatar_url
+             FROM review_comments rc
+             JOIN users u ON u.id = rc.user_id
+             WHERE rc.review_id = ?
+             ORDER BY rc.created_at ASC`,
+            [reviewId]
+        );
+        res.json(comments);
+    } catch (error) { console.error(error); res.status(500).json({ error: 'Erreur serveur.' }); }
+});
+
+// POST /api/reviews/:id/comments
+router.post('/:id/comments', authMiddleware, async (req, res) => {
+    const reviewId = parseInt(req.params.id);
+    const userId   = req.user.id;
+    if (isNaN(reviewId)) return res.status(400).json({ error: 'ID invalide.' });
+    const { content } = req.body;
+    if (!content || content.trim().length === 0) return res.status(400).json({ error: 'Le commentaire ne peut pas être vide.' });
+    if (content.trim().length > 1000) return res.status(400).json({ error: 'Maximum 1000 caractères.' });
+    try {
+        const review = await query('SELECT id FROM reviews WHERE id = ?', [reviewId]);
+        if (review.length === 0) return res.status(404).json({ error: 'Critique introuvable.' });
+        const result = await query(
+            'INSERT INTO review_comments (review_id, user_id, content) VALUES (?, ?, ?)',
+            [reviewId, userId, content.trim()]
+        );
+        const [newComment] = await query(
+            `SELECT rc.id, rc.content, rc.created_at, u.id AS user_id, u.username, u.avatar_url
+             FROM review_comments rc JOIN users u ON u.id = rc.user_id WHERE rc.id = ?`,
+            [result.insertId]
+        );
+        res.status(201).json(newComment);
+    } catch (error) { console.error(error); res.status(500).json({ error: 'Erreur serveur.' }); }
+});
+
+// DELETE /api/reviews/:id/comments/:commentId
+router.delete('/:id/comments/:commentId', authMiddleware, async (req, res) => {
+    const commentId = parseInt(req.params.commentId);
+    const userId    = req.user.id;
+    const isAdmin   = req.user.role === 'admin';
+    try {
+        const rows = await query('SELECT user_id FROM review_comments WHERE id = ?', [commentId]);
+        if (rows.length === 0) return res.status(404).json({ error: 'Commentaire introuvable.' });
+        if (rows[0].user_id !== userId && !isAdmin) return res.status(403).json({ error: 'Action non autorisée.' });
+        await query('DELETE FROM review_comments WHERE id = ?', [commentId]);
+        res.json({ message: 'Commentaire supprimé.' });
+    } catch (error) { console.error(error); res.status(500).json({ error: 'Erreur serveur.' }); }
+});
+
 // POST report a review — doit être avant POST /:type/:tmdb_id pour éviter le conflit de routes
 router.post('/:id/report', authMiddleware, async (req, res) => {
     const reviewId = req.params.id;
@@ -105,7 +213,6 @@ router.post('/:type/:tmdb_id', authMiddleware, async (req, res) => {
     const { rating, comment } = req.body;
     const userId = req.user.id;
 
-    // Check if user is banned
     try {
         const userRow = await query('SELECT is_banned FROM users WHERE id = ?', [userId]);
         if (userRow[0]?.is_banned) {

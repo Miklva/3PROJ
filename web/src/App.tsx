@@ -14,7 +14,8 @@ import PublicProfile from './pages/PublicProfile';
 import Admin from './pages/Admin';
 import OAuthCallback from './pages/OAuthCallback';
 import Dashboard from './pages/Dashboard';
-
+import Feed from './pages/Feed';
+import Messages from './pages/Messages';
 
 function App() {
     return (
@@ -34,6 +35,9 @@ function App() {
                         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                         <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
                         <Route path="/oauth-callback" element={<OAuthCallback />} />
+                        <Route path="/feed" element={<ProtectedRoute><Feed /></ProtectedRoute>} />
+                        <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
+                        <Route path="/messages/:partnerId" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
                     </Route>
                 </Routes>
             </Router>
