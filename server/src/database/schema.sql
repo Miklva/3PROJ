@@ -95,7 +95,6 @@ CREATE TABLE IF NOT EXISTS list_items (
     FOREIGN KEY (list_id) REFERENCES lists(id) ON DELETE CASCADE
 );
 
-<<<<<<< HEAD
 CREATE TABLE IF NOT EXISTS media_cache (
     tmdb_id     INT NOT NULL,
     media_type  ENUM('movie', 'tv') NOT NULL,
@@ -103,7 +102,7 @@ CREATE TABLE IF NOT EXISTS media_cache (
     fetched_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (tmdb_id, media_type)
 );
-=======
+
 CREATE TABLE IF NOT EXISTS messages (
     id          INT AUTO_INCREMENT PRIMARY KEY,
     sender_id   INT NOT NULL,
@@ -117,4 +116,3 @@ CREATE TABLE IF NOT EXISTS messages (
 
 CREATE INDEX idx_messages_conversation ON messages (sender_id, receiver_id);
 CREATE INDEX idx_messages_receiver     ON messages (receiver_id, is_read);
->>>>>>> c0394e0 (Message + like et sous commentaire)
